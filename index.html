@@ -3,203 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الاختبار النهائي الذكي | أ. عبدالعزيز الفيفي</title>
+    <title>نظام الاختبارات الذكي | أ. عبدالعزيز الفيفي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --primary: #1e3a8a; --accent: #3b82f6; --bg: #f8fafc; }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; user-select: none; -webkit-user-select: none; }
-        .header { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 40px; text-align: center; clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%); }
-        .container { max-width: 900px; margin: -50px auto 60px; padding: 0 20px; }
-        #timer-box { position: sticky; top: 10px; z-index: 1000; background: white; border: 2px solid var(--primary); padding: 8px 25px; border-radius: 50px; width: fit-content; margin: 0 auto 20px; font-weight: 900; color: var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: none; }
-        .card.active { display: block; animation: fadeInUp 0.4s; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .section-header { background: #e0f2fe; color: var(--primary); padding: 15px; border-radius: 12px; margin-bottom: 25px; font-weight: 900; border-right: 8px solid var(--primary); font-size: 1.2em; }
-        .q-item { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .opt-label { background: white; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; font-size: 15px; }
-        .opt-label:hover { border-color: var(--accent); background: #f0f7ff; }
-        input[type="text"] { width: 100%; padding: 14px; border: 2px solid #cbd5e1; border-radius: 10px; font-family: 'Cairo'; margin-top: 10px; box-sizing: border-box; }
-        .btn { padding: 15px; border-radius: 12px; border: none; font-family: 'Cairo'; font-weight: 700; cursor: pointer; width: 100%; font-size: 17px; transition: 0.3s; margin-top: 10px; }
+        :root { --primary: #1e3a8a; --accent: #3b82f6; --success: #10b981; --error: #ef4444; --hint: #f59e0b; --bg: #f8fafc; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; color: #1e293b; }
+        .header { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 40px 20px; text-align: center; clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%); }
+        .container { max-width: 900px; margin: -30px auto 50px; padding: 0 20px; }
+        #timer-bar { position: sticky; top: 10px; z-index: 100; background: white; border: 2px solid var(--primary); padding: 8px 20px; border-radius: 50px; width: fit-content; margin: 0 auto 20px; font-weight: 900; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: none; border: 1px solid #e2e8f0; }
+        .card.active { display: block; animation: slideIn 0.4s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .q-box { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 20px; border-right: 5px solid var(--accent); position: relative; }
+        .hint-btn { position: absolute; left: 15px; top: 15px; background: var(--hint); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .opt-label { background: white; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .opt-label:hover { border-color: var(--accent); }
+        input[type="text"] { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-family: 'Cairo'; margin-top: 10px; box-sizing: border-box; }
+        .btn { padding: 12px 30px; border-radius: 12px; border: none; font-family: 'Cairo'; font-weight: 700; cursor: pointer; transition: 0.3s; }
         .btn-next { background: var(--primary); color: white; }
-        @media print { body { display: none; } }
+        .btn-finish { background: var(--success); color: white; width: 100%; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { padding: 12px; border: 1px solid #e2e8f0; text-align: right; font-size: 14px; }
+        th { background: #f8fafc; color: var(--primary); }
+        .status-tag { padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 12px; }
+        .correct { background: #dcfce7; color: #166534; }
+        .wrong { background: #fee2e2; color: #991b1b; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-<header class="header">
-    <h1>اختبار الكفايات اللغوية (الفعل المضارع)</h1>
-    <p>بإشراف أ. عبدالعزيز الفيفي | نظام الـ 42 سؤالاً العشوائي</p>
-</header>
+<div class="header">
+    <h2>اختبار كفايات الفعل المضارع الشامل</h2>
+    <p>بإشراف الأستاذ: عبدالعزيز الفيفي</p>
+</div>
 
-<div class="container" id="quiz-wrapper">
-    <div id="timer-box">⏱️ المتبقي: <span id="clock">45:00</span></div>
+<div class="container">
+    <div id="timer-bar">⏱️ <span id="clock">45:00</span></div>
 
-    <form id="quiz-form">
-        <div class="card active" id="auth-screen">
-            <h2 style="text-align:center;">بيانات الطالب</h2>
-            <input type="text" id="stu-name" placeholder="الاسم الثلاثي" required>
-            <input type="text" id="stu-class" placeholder="الفصل" required>
-            <button type="button" class="btn btn-next" onclick="startEngine()">دخول الاختبار</button>
-            <p style="text-align:center; color:#ef4444; font-size:13px; margin-top:20px; font-weight: bold;">⚠️ نظام الحماية نشط: يمنع التصوير أو الإعادة.</p>
+    <form id="quizForm">
+        <div class="card active" id="step0">
+            <h3 style="text-align:center">بيانات الطالب قبل البدء</h3>
+            <input type="text" id="stdName" placeholder="الاسم الرباعي" required>
+            <input type="text" id="stdClass" placeholder="الصف والفصل" required>
+            <button type="button" class="btn btn-next" style="width:100%; margin-top:20px" onclick="startExam()">ابدأ الاختبار</button>
         </div>
-        <div id="quiz-content"></div>
+
+        <div id="dynamicSteps"></div>
     </form>
 
-    <div id="result-screen" class="card">
-        <h2 style="text-align:center;">تم إرسال إجاباتك</h2>
-        <div style="font-size:40px; text-align:center; color:var(--primary); font-weight:900;" id="final-score">بانتظار المراجعة</div>
-        <div id="student-info" style="text-align:center; margin:20px 0; font-weight:700; font-size: 1.2em;"></div>
-        <p style="text-align:center; color:#10b981; font-weight: bold;">شكراً لك يا بطل، تم رصد درجتك بنجاح.</p>
+    <div id="resultCard" class="card">
+        <h2 style="text-align:center">تقرير الأداء النهائي</h2>
+        <div id="scoreBox" style="text-align:center; font-size:40px; font-weight:900; color:var(--primary); margin:20px 0;"></div>
+        <div id="studentDetail" style="text-align:center; margin-bottom:20px; color:#64748b;"></div>
+        <div style="overflow-x:auto">
+            <table id="summaryTable">
+                <thead>
+                    <tr>
+                        <th>السؤال</th>
+                        <th>إجابتك</th>
+                        <th>الإجابة الصحيحة</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <button class="btn btn-next" style="width:100%; margin-top:30px" onclick="location.reload()">إعادة الاختبار</button>
     </div>
 </div>
 
 <script>
-    // المخزن المركزي المحقون بالنماذج الأربعة
-    const masterBank = {
-        multiple_choice: [], // القسم 1
-        fill_blank: [],      // القسم 2
-        sentence_example: [],// القسم 3
-        parsing: [],         // القسم 4
-        extraction: [],      // القسم 5
-        true_false: []       // القسم 6
-    };
+// مستودع الأسئلة مع التلميحات ونظام التصحيح
+const questionsBank = [
+    // القسم 1: اختر
+    { q: "ما علامة رفع 'يدرسون'؟", type: 'choice', opts: ["الضمة", "ثبوت النون", "الواو", "حذف النون"], ans: "ثبوت النون", hint: "تذكر: هذا الفعل من الأفعال الخمسة." },
+    { q: "الأداة التي تنصب المضارع وتفيد الاستقبال هي:", type: 'choice', opts: ["لم", "لا الناهية", "لن", "لام الأمر"], ans: "لن", hint: "تفيد النفي في المستقبل." },
+    { q: "علامة جزم 'لا تنسَ' ذكر الله:", type: 'choice', opts: ["السكون", "حذف حرف العلة", "حذف النون", "الفتحة"], ans: "حذف حرف العلة", hint: "أصل الفعل 'تنسى'." },
+    { q: "يُرفع المضارع بالضمة المقدرة للثقل إذا انتهى بـ:", type: 'choice', opts: ["الألف", "الواو أو الياء", "النون", "حرف صحيح"], ans: "الواو أو الياء", hint: "الثقل للصوت الطويل (و، ي)." },
+    { q: "أي الأفعال التالية مجزوم؟", type: 'choice', opts: ["يكتبُ", "أن يكتبَ", "لم يكتبْ", "سيكتبُ"], ans: "لم يكتبْ", hint: "ابحث عن أداة الجزم 'لم'." },
+    { q: "علامة نصب الأفعال الخمسة هي:", type: 'choice', opts: ["حذف النون", "ثبوت النون", "الفتحة", "السكون"], ans: "حذف النون", hint: "عكس حالة الرفع." },
+    { q: "الأداة 'كي' حرف مصدري ونصب يفيد:", type: 'choice', opts: ["التعليل", "النفي", "الأمر", "الشرط"], ans: "التعليل", hint: "تستخدم لبيان السبب." },
 
-    const sourceData = [
-        { "id": "A", "sections": [
-            { "type": "multiple_choice", "q": ["علامة رفع 'يذهبون'؟", "أداة تنصب المضارع هي؟", "المضارع 'يسعى' منصوب بفتحة؟", "يجزم المضارع إذا سبقته؟", "علامة جزم 'لا تدعُ'؟", "الفعل المرفوع هو الذي لم يسبقه؟", "'لن يرميَ' الفتحة هنا؟"] },
-            { "type": "fill_blank", "q": ["يُرفع المضارع بالضمة الظاهرة إذا كان ____ الآخر.", "يُنصب المضارع بعد 'حتى' إذا دل على ____.", "علامة جزم الأفعال الخمسة هي ____.", "لام ____ تنصب الفعل وتفيد التعليل.", "تُقدر الضمة على الواو والياء للـ ____.", "'لم' حرف جزم يفيد النفي و ____.", "يصبح المضارع منصوباً إذا سبقه حرف ____."] },
-            { "type": "sentence_example", "q": ["مضارع مرفوع بثبوت النون", "مضارع منصوب بـ 'لن'", "مضارع مجزوم بـ 'لا' الناهية", "مضارع منصوب بفتحة مقدرة", "مضارع مجزوم بحذف حرف العلة", "مضارع مرفوع بضمة مقدرة للثقل", "أداة شرط تجزم فعلين"] },
-            { "type": "parsing", "q": ["المعلمان [يشرحان]", "لن [تنالوا] البر", "لم [يسعَ] الرجل", "[نحترمُ] الكبير", "اجتهد لـ [تتفوقَ]", "لا [تُهملْ]", "القاضي [يقضي] بالعدل"] },
-            { "type": "extraction", "q": ["يريد الله أن يخفف عنكم", "لم يلد ولم يولد", "فالله يحكم بينهم", "ليُنفق ذو سعة", "كي نقرأ التاريخ", "المجتهدون يحصدون", "لا تمشِ في الأرض"] },
-            { "type": "true_false", "q": ["تظهر الفتحة على المعتل بالواو", "الجزم يدخل على الأسماء", "علامة رفع الأفعال الخمسة هي الواو", "الأداة 'لن' تفيد الاستقبال", "يُجزم 'يسعى' بالسكون", "لا النافية لا تجزم", "الأفعال الخمسة تتصل بها واو الجماعة"] }
-        ]},
-        { "id": "B", "sections": [
-            { "type": "multiple_choice", "q": ["علامة رفع 'تكتبين'؟", "أداة تجزم فعلاً واحداً؟", "المضارع 'يدعو' منصوب بفتحة؟", "ينصب المضارع إذا سبقته؟", "علامة جزم 'لم يرمِ'؟", "المضارع 'يرسمُ' مرفوع بـ؟", "'أن ينسى' الفتحة هنا؟"] },
-            { "type": "fill_blank", "q": ["يُرفع المضارع بالضمة المقدرة إذا كان ____ الآخر.", "من أدوات الجزم التي تجزم فعلين ____.", "الأفعال الخمسة تُرفع بـ ____.", "أنْ لن كي هي أدوات ____.", "يُجزم الفعل الصحيح الآخر بـ ____.", "لا ____ هي التي تجزم الفعل المضارع.", "إذا اتصلت نون النسوة بالمضارع يبنى على ____."] },
-            { "type": "sentence_example", "q": ["مضارع منصوب بـ 'كي'", "مضارع مجزوم بـ 'لم'", "مضارع مرفوع بالضمة الظاهرة", "مضارع منصوب بفتحة ظاهرة على الياء", "مضارع مجزوم بالسكون", "مضارع من الأفعال الخمسة منصوب", "جملة فيها لام التعليل"] },
-            { "type": "parsing", "q": ["أنتِ [تذاكرين]", "أن [تسمو] بأخلاقك", "لا [تنسَ] ذكر الله", "[يسعى] الطالب للنجاح", "لن [نخرجَ] الآن", "ليـ[ـكتبْ] الطالب درسه", "العاملان [يخلصان]"] },
-            { "type": "extraction", "q": ["لن نبرح عليه عاكفين", "لم يكن الله ليغفر لهم", "يكاد سنا برقه يذهب", "إن تذاكر تنجح", "فليستجيبوا لي", "يخافون يوماً", "لا تقفُ ما ليس لك به علم"] },
-            { "type": "true_false", "q": ["الفتحة تُقدر على الألف للتعذر", "أدوات النصب تجزم المضارع", "ثبوت النون علامة رفع فرعية", "لم حرف نفي وجزم وقلب", "المعتل الآخر يُجزم بالسكون", "لام الأمر تفيد الطلب وتجزم", "يُرفع المضارع إذا سبقه مبتدأ"] }
-        ]},
-        { "id": "C", "sections": [
-            { "type": "multiple_choice", "q": ["علامة رفع 'يقومُ'؟", "أداة شرط جازمة؟", "المضارع 'تجري' منصوب بـ؟", "يجزم المضارع بـ 'لا' الـ؟", "علامة جزم 'لم يسعَ'؟", "رفع الأفعال الخمسة يكون بـ؟", "أداة نصب تفيد الغاية؟"] },
-            { "type": "fill_blank", "q": ["ينصب المضارع بفتحة مقدرة إذا انتهى بـ ____.", "لام ____ تسبق بكون منفي وتنصب.", "علامة جزم 'لم يعلُ' هي حذف ____.", "كي حرف مصدري و ____.", "يرفع المضارع إذا تجرد من ____ و ____.", "من أخوات 'إنْ' الشرطية ____.", "علامة نصب 'لن يلعبوا' هي ____."] },
-            { "type": "sentence_example", "q": ["مضارع منصوب بلام الجحود", "مضارع مجزوم بـ 'إن' الشرطية", "مضارع مرفوع بضمة مقدرة للتعذر", "مضارع من الأفعال الخمسة مجزوم", "مضارع منصوب بـ 'حتى'", "مضارع صحيح الآخر مرفوع", "مضارع معتل الآخر منصوب بفتحة ظاهرة"] },
-            { "type": "parsing", "q": ["ما كان الله لـ [يظلمَـ]ـهم", "إن [تجتهدوا] تنجحوا", "[تجري] الرياح بما لا تشتهي", "لم [يخشَ] المؤمن إلا الله", "عليكما أن [تستعدا]", "لا [تصرخْ] عالياً", "الأب [يرعى] أبناءه"] },
-            { "type": "extraction", "q": ["حتى يرجع إلينا موسى", "فارتقب يوم تأتي السماء", "ألم يعلم بأن الله يرى", "فبأي آلاء ربكما تكذبان", "ليقضِ علينا ربك", "لن نؤمن لك", "لا تشرك بالله"] },
-            { "type": "true_false", "q": ["حذف النون علامة نصب وجزم", "الضمة تظهر على الألف", "لام التعليل من أدوات الجزم", "كي تفيد التعليل وهي تنصب", "يجزم المعتل الآخر بحذف آخره", "المضارع يبنى إذا اتصل بـ 'أن'", "الأفعال الخمسة ترفع بالواو"] }
-        ]},
-        { "id": "D", "sections": [
-            { "type": "multiple_choice", "q": ["علامة رفع 'ينجحان'؟", "أداة تفيد النفي والقلب؟", "منصوب بفتحة مقدرة؟", "يجزم 'لم يقضِ' بـ؟", "أداة نصب تفيد النفي؟", "الفعل المرفوع بالضمة؟", "علامة جزم 'تأكلوا'؟"] },
-            { "type": "fill_blank", "q": ["تظهر الفتحة على المضارع المعتل بـ ____ و ____.", "لا ____ لا تؤثر في إعراب الفعل.", "علامة جزم الصحيح الآخر هي ____.", "لام ____ تجزم الفعل وتفيد الإلزام.", "يُنصب المضارع بـ ____ إذا كان من الأفعال الخمسة.", "يُقدر الرفع للثقل إذا انتهى بـ ____.", "أدوات الشرط تجزم ____."] },
-            { "type": "sentence_example", "q": ["مضارع مرفوع بثبوت النون", "مضارع منصوب بـ 'أن'", "مضارع مجزوم بحذف حرف العلة (واو)", "مضارع منصوب بفتحة مقدرة", "مضارع مجزوم بلام الأمر", "مضارع مرفوع بالضمة الظاهرة", "مضارع من الأفعال الخمسة مرفوع"] },
-            { "type": "parsing", "q": ["هما [يلعبان] بالكرة", "أريد أن [أسمو] بنفسي", "لم [يدعُ] باسم الصنم", "الطالب [يقرأ]", "لا [تظلموا] الناس", "ذاكر كي [تنجحَ]", "المسافر [يعدو] للحاق"] },
-            { "type": "extraction", "q": ["لن تنالوا البر حتى تنفقوا", "ألم نشرح لك صدرك", "والله يدعو إلى دار السلام", "إن يشأ يذهبكم", "لا تنهَ عن خلق وتأتي مثله", "يقولون بأفواههم", "ليؤمنوا بي"] },
-            { "type": "true_false", "q": ["الضمة الظاهرة للصحيح الآخر", "حتى تنصب المضارع دائماً", "لا الناهية تفيد الكف عن الفعل", "المضارع المنصوب يسبقه جازم", "علامة جزم الأفعال الخمسة السكون", "الفتحة تظهر على الياء", "أنْ حرف جزم ونصب"] }
-        ]}
-    ];
+    // القسم 2: أكمل
+    { q: "يُجزم المضارع الصحيح الآخر بعلامة _______.", type: 'text', ans: "السكون", hint: "مثل: لم يذهبْ." },
+    { q: "أن، لن، كي، حتى هي أدوات _______ الفعل المضارع.", type: 'text', ans: "نصب", hint: "تدخل على الفعل فتغير حركته للفتحة." },
+    { q: "تُقدر الحركة للتعذر إذا كان الفعل ينتهي بحرف _______.", type: 'text', ans: "الألف", hint: "مثل: يسعى، يخشى." },
+    { q: "إذا سبق الفعل المضارع بـ 'لام الأمر' فإنه يكون _______.", type: 'text', ans: "مجزوم", hint: "لام الأمر من أدوات الجزم." },
+    { q: "الطلاب لن _______ (يخرج) من الفصل. (أكمل الفعل بالصيغة الصحيحة)", type: 'text', ans: "يخرجوا", hint: "فعل من الأفعال الخمسة منصوب." },
+    { q: "لا _______ (تدعو) مع الله إلهاً آخر. (اكتب الفعل مجزوماً)", type: 'text', ans: "تدعُ", hint: "احذف حرف العلة الواو." },
+    { q: "يرفع الفعل المضارع إذا لم يسبقه _______ أو جازم.", type: 'text', ans: "ناصب", hint: "مثل 'أن' أو 'لن'." }
+];
 
-    // حقن وتوزيع البيانات آلياً
-    sourceData.forEach(model => {
-        model.sections.forEach(sec => {
-            masterBank[sec.type].push(...sec.q);
-        });
-    });
+// وظيفة لتنظيف النص وتدقيق الإجابة (التصحيح الذكي)
+function smartCheck(userAns, correctAns) {
+    if (!userAns) return false;
+    const clean = (str) => str.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '').trim();
+    return clean(userAns) === clean(correctAns);
+}
 
-    function startEngine() {
-        const name = document.getElementById('stu-name').value.trim();
-        const sClass = document.getElementById('stu-class').value.trim();
-        if(name.length < 5 || sClass === "") return Swal.fire('تنبيه','يرجى كتابة الاسم الثلاثي والفصل','warning');
+let currentStep = 0;
+let timer;
+
+function startExam() {
+    if(!document.getElementById('stdName').value) return Swal.fire('تنبيه','يرجى كتابة الاسم','warning');
+    buildSteps();
+    document.getElementById('step0').classList.remove('active');
+    document.getElementById('step1').classList.add('active');
+    startTimer(1800);
+}
+
+function buildSteps() {
+    const cont = document.getElementById('dynamicSteps');
+    // تقسيم الأسئلة لصفحات (كل صفحة 7 أسئلة)
+    for (let s = 0; s < 2; s++) { // مثال لصفحتين
+        const stepDiv = document.createElement('div');
+        stepDiv.className = 'card'; stepDiv.id = `step${s+1}`;
+        stepDiv.innerHTML = `<h4 style="color:var(--accent)">القسم ${s+1} - اختبار الكفايات</h4>`;
         
-        if(localStorage.getItem('final_lock_'+name)) {
-            document.getElementById('quiz-wrapper').innerHTML = "<div class='card active' style='text-align:center;'><h2>🚫 لا يسمح بإعادة الاختبار</h2></div>";
-            return;
+        for (let i = s*7; i < (s+1)*7; i++) {
+            const item = questionsBank[i];
+            let html = `<div class="q-box"><button type="button" class="hint-btn" onclick="Swal.fire('تلميحة المساعد','${item.hint}','info')">؟</button>
+                        <span style="font-weight:bold">س${i+1}: ${item.q}</span><br>`;
+            if(item.type === 'choice') {
+                html += `<div class="options-grid">`;
+                item.opts.forEach(o => {
+                    html += `<label class="opt-label"><input type="radio" name="q${i}" value="${o}"> ${o}</label>`;
+                });
+                html += `</div>`;
+            } else {
+                html += `<input type="text" id="ans${i}" placeholder="اكتب الإجابة الصحيحة هنا...">`;
+            }
+            html += `</div>`;
+            stepDiv.innerHTML += html;
         }
-
-        renderQuiz();
-        document.getElementById('auth-screen').classList.remove('active');
-        document.getElementById('sec-1').classList.add('active');
-        startTimer();
+        stepDiv.innerHTML += `<div style="display:flex; gap:10px">
+            <button type="button" class="btn btn-next" style="background:#94a3b8" onclick="move(${s})">السابق</button>
+            ${s === 1 ? `<button type="button" class="btn btn-finish" onclick="processResults()">إنهاء وتصحيح</button>` : `<button type="button" class="btn btn-next" style="flex:2" onclick="move(${s+2})">التالي</button>`}
+        </div>`;
+        cont.appendChild(stepDiv);
     }
+}
 
-    function renderQuiz() {
-        const wrapper = document.getElementById('quiz-content');
-        const types = [
-            {id: 'multiple_choice', title: 'القسم 1: اختر الإجابة الصحيحة'},
-            {id: 'fill_blank', title: 'القسم 2: أكمل الفراغات'},
-            {id: 'sentence_example', title: 'الالقسم 3: مثّل في جملة مفيدة'},
-            {id: 'parsing', title: 'القسم 4: أعرب ما بين القوسين'},
-            {id: 'extraction', title: 'القسم 5: استخرج من النص'},
-            {id: 'true_false', title: 'القسم 6: صح أم خطأ'}
-        ];
+function move(n) {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    document.getElementById(`step${n}`).classList.add('active');
+    window.scrollTo(0,0);
+}
 
-        types.forEach((type, idx) => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.id = `sec-${idx+1}`;
-            card.innerHTML = `<div class="section-header">${type.title}</div>`;
-            
-            // سحب 7 عشوائية من المخزن المدمج لكل قسم
-            const pool = masterBank[type.id].sort(() => 0.5 - Math.random()).slice(0, 7);
-            
-            pool.forEach((questionText, qIdx) => {
-                const globalQId = (idx * 7) + qIdx;
-                let inputHtml = '';
-                
-                if(type.id === 'multiple_choice') {
-                    const opts = ["ثبوت النون", "الضمة الظاهرة", "حذف حرف العلة", "الفتحة المقدرة"];
-                    inputHtml = `<div class="opt-grid">${opts.map(o => `<label class="opt-label"><input type="radio" name="q${globalQId}"> ${o}</label>`).join('')}</div>`;
-                } else if(type.id === 'true_false') {
-                    inputHtml = `<div class="opt-grid"><label class="opt-label"><input type="radio" name="q${globalQId}"> صح ✅</label><label class="opt-label"><input type="radio" name="q${globalQId}"> خطأ ❌</label></div>`;
-                } else {
-                    inputHtml = `<input type="text" placeholder="اكتب إجابتك هنا...">`;
-                }
-                
-                card.innerHTML += `<div class="q-item"><p><b>س${qIdx+1}:</b> ${questionText}</p>${inputHtml}</div>`;
-            });
+function startTimer(sec) {
+    timer = setInterval(() => {
+        let m = Math.floor(sec/60), s = sec%60;
+        document.getElementById('clock').innerText = `${m}:${s<10?'0'+s:s}`;
+        if(sec-- <= 0) { clearInterval(timer); processResults(); }
+    }, 1000);
+}
 
-            const isLast = idx === 5;
-            card.innerHTML += `<button type="button" class="btn btn-next" onclick="nextPage(${idx+1}, ${isLast})">${isLast ? 'إرسال الاختبار النهائي' : 'القسم التالي ⬅️'}</button>`;
-            wrapper.appendChild(card);
-        });
-    }
+function processResults() {
+    clearInterval(timer);
+    let score = 0;
+    const tbody = document.querySelector('#summaryTable tbody');
+    tbody.innerHTML = '';
 
-    function nextPage(curr, last) {
-        if(last) finish(); else {
-            document.getElementById(`sec-${curr}`).classList.remove('active');
-            document.getElementById(`sec-${curr+1}`).classList.add('active');
-            window.scrollTo(0,0);
-        }
-    }
+    questionsBank.forEach((item, i) => {
+        let uAns = (item.type === 'choice') ? (document.querySelector(`input[name="q${i}"]:checked`)?.value || "بلا إجابة") : document.getElementById(`ans${i}`).value;
+        let isCorrect = smartCheck(uAns, item.ans);
+        if(isCorrect) score++;
 
-    let time = 2700;
-    function startTimer() {
-        const timerObj = setInterval(() => {
-            let m = Math.floor(time/60), s = time%60;
-            document.getElementById('clock').innerText = `${m}:${s<10?'0'+s:s}`;
-            if(time-- <= 0) { clearInterval(timerObj); finish(); }
-        }, 1000);
-    }
-
-    function finish() {
-        const name = document.getElementById('stu-name').value;
-        localStorage.setItem('final_lock_'+name, 'done');
-        document.getElementById('quiz-form').style.display = 'none';
-        document.getElementById('timer-box').style.display = 'none';
-        document.getElementById('result-screen').classList.add('active');
-        document.getElementById('student-info').innerText = `الطالب: ${name} | الفصل: ${document.getElementById('stu-class').value}`;
-        Swal.fire('تم بنجاح', 'تم استلام إجاباتك ورصدها.', 'success');
-    }
-
-    // الحماية من التصوير
-    document.addEventListener('keydown', e => {
-        if(e.key === "PrintScreen" || (e.ctrlKey && (e.key==='p' || e.key==='s' || e.key==='u'))) {
-            e.preventDefault();
-            Swal.fire('تنبيه أمني', 'غير مسموح بهذا الإجراء.', 'error');
-        }
+        tbody.innerHTML += `<tr>
+            <td>${item.q}</td>
+            <td style="color:${isCorrect?'green':'red'}">${uAns}</td>
+            <td style="font-weight:bold">${item.ans}</td>
+            <td><span class="status-tag ${isCorrect?'correct':'wrong'}">${isCorrect?'صحيح':'خطأ'}</span></td>
+        </tr>`;
     });
+
+    document.getElementById('quizForm').style.display = 'none';
+    document.getElementById('resultCard').classList.add('active');
+    document.getElementById('scoreBox').innerText = `${score} / ${questionsBank.length}`;
+    document.getElementById('studentDetail').innerText = `الطالب: ${document.getElementById('stdName').value} | الصف: ${document.getElementById('stdClass').value}`;
+}
 </script>
 </body>
 </html>
