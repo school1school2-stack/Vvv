@@ -3,236 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الاختبارات الذكية | الفعل المضارع</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>نظام الاختبارات الذكي | تصحيح دقيق</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root {
-            --primary: #4f46e5; --secondary: #6366f1; --bg: #f8fafc;
-            --card: #ffffff; --text: #1e293b; --success: #10b981; --danger: #ef4444;
-        }
-
-        body {
-            font-family: 'Cairo', sans-serif; background-color: var(--bg);
-            color: var(--text); margin: 0; padding: 0; overflow-x: hidden;
-        }
-
-        /* Header & Progress */
-        .quiz-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white; padding: 40px 20px; text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .progress-container {
-            width: 100%; max-width: 600px; margin: 20px auto;
-            background: rgba(255,255,255,0.2); height: 8px; border-radius: 10px;
-        }
-
-        .progress-bar {
-            width: 20%; height: 100%; background: var(--success);
-            border-radius: 10px; transition: 0.5s ease;
-        }
-
-        .container { max-width: 800px; margin: -30px auto 50px; padding: 0 20px; }
-
-        /* Step Logic */
-        .step { display: none; animation: fadeIn 0.5s ease; }
-        .step.active { display: block; }
-
+        :root { --p: #4f46e5; --s: #10b981; --d: #ef4444; --bg: #f8fafc; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        .header { background: linear-gradient(135deg, var(--p), #6366f1); color: white; padding: 30px; text-align: center; clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%); }
+        .container { max-width: 900px; margin: -30px auto 50px; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: none; }
+        .card.active { display: block; animation: fadeIn 0.4s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .card {
-            background: var(--card); padding: 30px; border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
-        }
-
-        #timer-box {
-            position: sticky; top: 20px; z-index: 100; background: white;
-            border: 2px solid var(--primary); padding: 10px 20px;
-            border-radius: 50px; width: fit-content; margin: 0 auto 20px;
-            font-weight: 900; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        /* Inputs & Options */
-        .student-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        input[type="text"] {
-            width: 100%; padding: 12px; border: 2px solid #e2e8f0;
-            border-radius: 12px; font-family: 'Cairo'; font-size: 16px; transition: 0.3s;
-        }
-        input[type="text"]:focus { border-color: var(--primary); outline: none; }
-
-        .question-item { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .option-label {
-            background: white; padding: 12px; border: 1px solid #cbd5e1;
-            border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;
-        }
-        .option-label:hover { border-color: var(--primary); background: #eef2ff; }
-
-        /* Navigation Buttons */
-        .nav-buttons { display: flex; justify-content: space-between; margin-top: 30px; }
-        .btn {
-            padding: 12px 35px; border-radius: 12px; font-weight: 700;
-            cursor: pointer; transition: 0.3s; font-family: 'Cairo'; font-size: 16px; border: none;
-        }
-        .btn-next { background: var(--primary); color: white; }
-        .btn-prev { background: #94a3b8; color: white; }
-        .btn-submit { background: var(--success); color: white; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        #timer { position: sticky; top: 15px; background: white; border: 2px solid var(--p); padding: 8px 20px; border-radius: 50px; width: fit-content; margin: 0 auto 15px; font-weight: 900; color: var(--p); z-index: 100; }
+        .q-box { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 20px; border-right: 5px solid var(--p); }
+        input[type="text"] { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-family: 'Cairo'; margin-top: 10px; font-size: 16px; }
+        .btn { padding: 12px 30px; border-radius: 12px; border: none; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s; }
+        .btn-next { background: var(--p); color: white; }
+        .btn-submit { background: var(--s); color: white; width: 100%; font-size: 18px; }
+        /* جدول النتائج */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: right; }
+        th { background: #f1f5f9; }
+        .correct { color: var(--s); font-weight: bold; }
+        .wrong { color: var(--d); font-weight: bold; }
+        .score-val { font-size: 48px; font-weight: 900; color: var(--p); }
     </style>
 </head>
 <body>
 
-<header class="quiz-header">
-    <h1>الاختبار الوطني الشامل</h1>
-    <p>حالات الفعل المضارع: الرفع، النصب، الجزم</p>
-    <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
-</header>
+<div class="header">
+    <h1>اختبار إعراب الفعل المضارع</h1>
+    <p>دقة عالية في التصحيح - 35 سؤالاً</p>
+</div>
 
 <div class="container">
-    <div id="timer-box">⏱️ المتبقي: <span id="time">30:00</span></div>
+    <div id="timer">⏱️ <span id="timeDisplay">30:00</span></div>
 
     <form id="quizForm">
-        <div class="step active card">
-            <h2 style="text-align: center;">مرحباً بك في الاختبار</h2>
-            <p style="text-align: center; color: #64748b;">يرجى إدخال بياناتك للبدء</p>
-            <div class="student-info-grid">
-                <input type="text" id="stuName" placeholder="الاسم الكامل" required>
-                <input type="text" id="stuClass" placeholder="الفصل" required>
-            </div>
-            <div class="nav-buttons" style="justify-content: center;">
-                <button type="button" class="btn btn-next" onclick="nextStep(1)">ابدأ الاختبار الآن</button>
-            </div>
+        <div class="card active" id="step0">
+            <h2 style="text-align:center">بيانات الطالب</h2>
+            <input type="text" id="stuName" placeholder="الاسم الكامل (بالحركات إن أردت)" required>
+            <input type="text" id="stuClass" placeholder="الفصل" required>
+            <button type="button" class="btn btn-next" style="margin:20px auto; display:block" onclick="move(1)">ابدأ الاختبار</button>
         </div>
 
-        <div class="step card">
-            <h3>القسم الأول: اختر الإجابة الصحيحة</h3>
-            <div class="question-item">
-                <p>1. علامة رفع الفعل "يدعو" هي:</p>
-                <div class="options-grid">
-                    <label class="option-label"><input type="radio" name="q1"> الضمة الظاهرة</label>
-                    <label class="option-label"><input type="radio" name="q1"> الضمة المقدرة للثقل</label>
-                    <label class="option-label"><input type="radio" name="q1"> الضمة المقدرة للتعذر</label>
-                    <label class="option-label"><input type="radio" name="q1"> ثبوت النون</label>
-                </div>
-            </div>
-            <p style="text-align: center; color: gray;">[هنا تضاف بقية الـ 7 أسئلة للقسم الأول بنفس التنسيق]</p>
-            
-            <div class="nav-buttons">
-                <button type="button" class="btn btn-prev" onclick="nextStep(0)">السابق</button>
-                <button type="button" class="btn btn-next" onclick="nextStep(2)">التالي</button>
-            </div>
-        </div>
-
-        <div class="step card">
-            <h3>القسم الثاني: أكمل الفراغ بالكلمة المناسبة</h3>
-            <div class="question-item">
-                <p>1. يجب أن ............ (يذاكر) الطالب لينجح.</p>
-                <input type="text" placeholder="اكتب الإجابة هنا...">
-            </div>
-            <p style="text-align: center; color: gray;">[هنا تضاف بقية الـ 7 أسئلة للقسم الثاني]</p>
-
-            <div class="nav-buttons">
-                <button type="button" class="btn btn-prev" onclick="nextStep(1)">السابق</button>
-                <button type="button" class="btn btn-next" onclick="nextStep(3)">التالي</button>
-            </div>
-        </div>
-
-        <div class="step card">
-            <h3>القسم الثالث: صح أم خطأ</h3>
-            <div class="question-item">
-                <p>1. علامة جزم الفعل المعتل الآخر هي حذف حرف العلة.</p>
-                <label><input type="radio" name="tf1"> صح</label> | <label><input type="radio" name="tf1"> خطأ</label>
-            </div>
-             <div class="nav-buttons">
-                <button type="button" class="btn btn-prev" onclick="nextStep(2)">السابق</button>
-                <button type="button" class="btn btn-next" onclick="nextStep(4)">التالي</button>
-            </div>
-        </div>
-
-        <div class="step card">
-            <h3>القسم الرابع: مِثّل لما يلي بجملة مفيدة</h3>
-            <div class="question-item">
-                <p>1. فعل مضارع منصوب بـ "حتى":</p>
-                <input type="text" style="width: 100%;">
-            </div>
-            <div class="nav-buttons">
-                <button type="button" class="btn btn-prev" onclick="nextStep(3)">السابق</button>
-                <button type="button" class="btn btn-next" onclick="nextStep(5)">التالي</button>
-            </div>
-        </div>
-
-        <div class="step card">
-            <h3>القسم الخامس: استخرج من النص</h3>
-            <div style="background: #eef2ff; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                "يا بني، لن تنالوا المجد إلا بالصبر، فمن يطلبْ العز يسهرْ."
-            </div>
-            <div class="question-item">
-                <p>1. استخرج فعلاً منصوباً وبين علامة نصبه:</p>
-                <input type="text">
-            </div>
-            <div class="nav-buttons">
-                <button type="button" class="btn btn-prev" onclick="nextStep(4)">السابق</button>
-                <button type="button" class="btn btn-submit" onclick="finishExam()">إنهاء وإرسال</button>
-            </div>
-        </div>
+        <div id="sectionsContainer"></div>
     </form>
+
+    <div id="resultArea" class="card">
+        <h2 style="text-align:center">تقرير الأداء التفصيلي</h2>
+        <div style="text-align:center">
+            <div class="score-val" id="finalScore">0 / 35</div>
+            <p id="studentInfoBox"></p>
+        </div>
+        <div style="overflow-x:auto">
+            <table id="summaryTable">
+                <thead>
+                    <tr>
+                        <th>السؤال</th>
+                        <th>إجابتك</th>
+                        <th>الإجابة الصحيحة</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <button class="btn btn-next" style="width:100%; margin-top:20px" onclick="location.reload()">إعادة الاختبار</button>
+    </div>
 </div>
 
 <script>
-    let currentStep = 0;
-    const steps = document.querySelectorAll(".step");
-    const progressBar = document.getElementById("progressBar");
+    // قاعدة البيانات: 35 سؤالاً مع الإجابات النموذجية (بما فيها الحركات)
+    const quizData = [
+        // القسم 1: اختر (7 أسئلة)
+        { type: 'radio', q: "يرفع المضارع بالضمة المقدرة للتعذر إذا انتهى بـ:", opts: ["ألف", "واو", "ياء", "نون"], ans: "ألف" },
+        { type: 'radio', q: "علامة نصب الأفعال الخمسة هي:", opts: ["الفتحة", "حذف النون", "ثبوت النون", "السكون"], ans: "حذف النون" },
+        { type: 'radio', q: "يجزم الفعل المضارع 'يخشى' بـ:", opts: ["السكون", "حذف حرف العلة", "الفتحة", "الضمة"], ans: "حذف حرف العلة" },
+        { type: 'radio', q: "أي الأدوات التالية تجزم فعلاً واحداً؟", opts: ["إنْ", "لم", "من", "كي"], ans: "لم" },
+        { type: 'radio', q: "الفعل 'يرمي' يرفع بضمة:", opts: ["ظاهرة", "مقدرة للثقل", "مقدرة للتعذر", "ثبوت نون"], ans: "مقدرة للثقل" },
+        { type: 'radio', q: "حرف النصب الذي يفيد الاستقبال والنفي هو:", opts: ["أن", "لن", "كي", "حتى"], ans: "لن" },
+        { type: 'radio', q: "تُجزم الأفعال الخمسة بـ:", opts: ["السكون", "حذف حرف العلة", "حذف النون", "الكسرة"], ans: "حذف النون" },
 
-    function nextStep(stepIndex) {
-        if (stepIndex === 1) {
-            const name = document.getElementById('stuName').value;
-            const sClass = document.getElementById('stuClass').value;
-            if (!name || !sClass) {
-                Swal.fire('عذراً', 'يرجى إدخال بياناتك أولاً', 'error');
-                return;
+        // القسم 2: أكمل (7 أسئلة - دقة الحركات)
+        { type: 'text', q: "يجبُ أنْ ............ (يذاكر) الطالبُ. (اضبط الفعل بالحركة)", ans: "يذاكرَ" },
+        { type: 'text', q: "لا ............ (تنسى) ذكرَ اللهِ. (اكتب الفعل مجزوماً)", ans: "تنسَ" },
+        { type: 'text', q: "العمالُ ............ (يعمل) بإخلاصٍ. (ارفع الفعل بثبوت النون)", ans: "يعملون" },
+        { type: 'text', q: "لن ............ (يسعى) المؤمنُ للشرِّ. (اضبط الفعل بالفتحة المقدرة)", ans: "يسعى" },
+        { type: 'text', q: "لم ............ (يدعو) الكافرُ ربهُ. (اكتب الفعل مجزوماً)", ans: "يدعُ" },
+        { type: 'text', q: "كي ............ (تنال) الجنةَ اطع والديك. (اضبط الفعل بالحركة)", ans: "تنالَ" },
+        { type: 'text', q: "ليـ............ (يقضي) اللهُ أمراً كان مفعولاً. (اضبط الفعل بعد لام الأمر)", ans: "يقضِ" },
+
+        // القسم 3: صح وخطأ (7 أسئلة)
+        { type: 'radio', q: "علامة جزم الفعل المضارع صحيح الآخر هي السكون.", opts: ["صح", "خطأ"], ans: "صح" },
+        { type: 'radio', q: "ينصب الفعل المضارع إذا سبقه حرف (لم).", opts: ["صح", "خطأ"], ans: "خطأ" },
+        { type: 'radio', q: "ثبوت النون هي علامة رفع الأفعال الخمسة.", opts: ["صح", "خطأ"], ans: "صح" },
+        { type: 'radio', q: "الفعل المضارع 'يرضى' علامة رفعه الضمة الظاهرة.", opts: ["صح", "خطأ"], ans: "خطأ" },
+        { type: 'radio', q: "لام التعليل من أدوات نصب المضارع.", opts: ["صح", "خطأ"], ans: "صح" },
+        { type: 'radio', q: "يجزم الفعل المضارع المعتل الآخر بحذف النون.", opts: ["صح", "خطأ"], ans: "خطأ" },
+        { type: 'radio', q: "أدوات الشرط الجازمة تجزم فعلين مضارعين.", opts: ["صح", "خطأ"], ans: "صح" },
+
+        // القسم 4: مثل (7 أسئلة - إجابات محددة للتمثيل)
+        { type: 'text', q: "مثل لـ: فعل مضارع منصوب بـ (لن) وعلامته الفتحة.", ans: "لن يذهبَ" },
+        { type: 'text', q: "مثل لـ: فعل مضارع مجزوم بـ (لا الناهية) وعلامته السكون.", ans: "لا تلعبْ" },
+        { type: 'text', q: "مثل لـ: فعل مضارع مرفوع بضمة مقدرة للثقل.", ans: "يقضي" },
+        { type: 'text', q: "مثل لـ: فعل مضارع مجزوم بحذف حرف العلة.", ans: "لم يسعَ" },
+        { type: 'text', q: "مثل لـ: فعل مضارع منصوب بحذف النون.", ans: "لن يكتبوا" },
+        { type: 'text', q: "مثل لـ: فعل مضارع مرفوع بثبوت النون.", ans: "يأكلون" },
+        { type: 'text', q: "مثل لـ: أداة شرط تجزم فعلين.", ans: "إنْ" },
+
+        // القسم 5: استخراج (7 أسئلة من نص: 'مَن يسعَ للخيرِ ينلْ رضاً ولن يندموا')
+        { type: 'text', q: "استخرج فعلاً مجزوماً بحذف حرف العلة:", ans: "يسعَ" },
+        { type: 'text', q: "استخرج جواب شرط مجزوماً بالسكون:", ans: "ينلْ" },
+        { type: 'text', q: "استخرج فعلاً منصوباً بحذف النون:", ans: "يندموا" },
+        { type: 'text', q: "استخرج حرف نصب:", ans: "لن" },
+        { type: 'text', q: "استخرج أداة شرط جازمة:", ans: "مَن" },
+        { type: 'text', q: "ما علامة جزم الفعل 'يسعَ'؟", ans: "حذف حرف العلة" },
+        { type: 'text', q: "ما علامة نصب الفعل 'يندموا'؟", ans: "حذف النون" }
+    ];
+
+    // توليد الأقسام
+    const container = document.getElementById('sectionsContainer');
+    for (let s = 0; s < 5; s++) {
+        let stepDiv = document.createElement('div');
+        stepDiv.className = 'card';
+        stepDiv.id = `step${s+1}`;
+        stepDiv.innerHTML = `<h3>القسم ${s+1} من 5</h3>`;
+        
+        for (let q = 0; q < 7; q++) {
+            let index = (s * 7) + q;
+            let item = quizData[index];
+            let qHtml = `<div class="q-box"><p>${q+1}. ${item.q}</p>`;
+            
+            if (item.type === 'radio') {
+                item.opts.forEach(opt => {
+                    qHtml += `<label style="display:block; margin:8px 0"><input type="radio" name="ans${index}" value="${opt}"> ${opt}</label>`;
+                });
+            } else {
+                qHtml += `<input type="text" id="ans${index}" placeholder="اكتب الإجابة بدقة مع الحركات...">`;
             }
+            qHtml += `</div>`;
+            stepDiv.innerHTML += qHtml;
         }
-        
-        steps[currentStep].classList.remove("active");
-        currentStep = stepIndex;
-        steps[currentStep].classList.add("active");
-        
-        // Update Progress Bar
-        let progress = ((currentStep) / (steps.length - 1)) * 100;
-        progressBar.style.width = progress + "%";
+
+        let nav = `<div style="display:flex; justify-content:space-between; margin-top:20px">
+            <button type="button" class="btn" style="background:#94a3b8; color:white" onclick="move(${s})">السابق</button>
+            ${s === 4 ? 
+                `<button type="button" class="btn btn-submit" onclick="showResult()">إنهاء وتصحيح</button>` : 
+                `<button type="button" class="btn btn-next" onclick="move(${s+2})">التالي</button>`}
+        </div>`;
+        stepDiv.innerHTML += nav;
+        container.appendChild(stepDiv);
+    }
+
+    // التنقل
+    function move(step) {
+        if (step === 1 && !document.getElementById('stuName').value) {
+            Swal.fire('تنبيه', 'يرجى كتابة الاسم أولاً', 'warning'); return;
+        }
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        document.getElementById(`step${step}`).classList.add('active');
         window.scrollTo(0, 0);
     }
 
-    // Timer Logic
-    let time = 30 * 60;
-    const timeDisplay = document.getElementById('time');
-    const timerInterval = setInterval(() => {
-        let m = Math.floor(time / 60);
-        let s = time % 60;
-        timeDisplay.innerHTML = `${m}:${s < 10 ? '0' + s : s}`;
-        if (time <= 0) {
-            clearInterval(timerInterval);
-            finishExam(true);
-        }
-        time--;
+    // المؤقت
+    let timeLeft = 30 * 60;
+    const timerInt = setInterval(() => {
+        let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+        document.getElementById('timeDisplay').innerText = `${m}:${s<10?'0'+s:s}`;
+        if (timeLeft-- <= 0) { clearInterval(timerInt); showResult(); }
     }, 1000);
 
-    function finishExam(isAuto = false) {
-        Swal.fire({
-            title: isAuto ? 'انتهى الوقت!' : 'هل أنت متأكد؟',
-            text: "سيتم إرسال إجاباتك الآن",
-            icon: isAuto ? 'warning' : 'question',
-            confirmButtonText: 'موافق'
-        }).then(() => {
-            document.body.innerHTML = `<div style="text-align:center; padding:100px;">
-                <h1 style="color:#4f46e5;">أحسنت!</h1>
-                <p>تم استلام إجاباتك بنجاح. شكراً لك.</p>
-            </div>`;
+    // التصحيح الدقيق
+    function showResult() {
+        clearInterval(timerInt);
+        let score = 0;
+        const tbody = document.querySelector('#summaryTable tbody');
+        tbody.innerHTML = '';
+
+        quizData.forEach((item, i) => {
+            let studentAns = '';
+            if (item.type === 'radio') {
+                let selected = document.querySelector(`input[name="ans${i}"]:checked`);
+                studentAns = selected ? selected.value : 'لم يتم الإجابة';
+            } else {
+                studentAns = document.getElementById(`ans${i}`).value.trim();
+            }
+
+            // المقارنة الدقيقة (تشمل الحركات)
+            const isCorrect = (studentAns === item.ans);
+            if (isCorrect) score++;
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${item.q}</td>
+                    <td class="${isCorrect?'correct':'wrong'}">${studentAns}</td>
+                    <td class="correct">${item.ans}</td>
+                    <td>${isCorrect?'✅':'❌'}</td>
+                </tr>
+            `;
         });
+
+        document.getElementById('quizForm').style.display = 'none';
+        document.getElementById('timer').style.display = 'none';
+        document.getElementById('resultArea').style.display = 'block';
+        document.getElementById('finalScore').innerText = `${score} / 35`;
+        document.getElementById('studentInfoBox').innerText = `الطالب: ${document.getElementById('stuName').value} | الفصل: ${document.getElementById('stuClass').value}`;
+        
+        Swal.fire('تم التصحيح!', `لقد حصلت على ${score} من 35`, 'success');
     }
 </script>
 </body>
