@@ -1,106 +1,99 @@
-# مستودع اختبارات اللغة العربية - موضوع: الفعل المضارع
-## ملف الاختبار: `Present_Tense_Exam.md`
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>اختبار الفعل المضارع الشامل</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #2c3e50; text-align: center; }
+        .student-info { background: #e8f4fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; }
+        input[type="text"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 1; }
+        #timer { font-size: 20px; font-weight: bold; color: #e74c3c; text-align: center; position: sticky; top: 10px; background: white; padding: 10px; border: 2px solid #e74c3c; border-radius: 50px; }
+        .question-section { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        .question-title { font-weight: bold; color: #2980b9; margin-bottom: 10px; display: block; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 8px; }
+        .submit-btn { display: block; width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; }
+        .submit-btn:hover { background: #219150; }
+    </style>
+</head>
+<body>
 
----
+<div class="container">
+    <h1>اختبار قواعد اللغة العربية (الفعل المضارع)</h1>
+    
+    <div class="student-info">
+        <input type="text" id="studentName" placeholder="اسم الطالب الثلاثي..." required>
+        <input type="text" id="studentClass" placeholder="الفصل..." required>
+    </div>
 
-### أولاً: اختر الإجابة الصحيحة (7 أسئلة - 4 خيارات)
+    <div id="timer">الوقت المتبقي: 30:00</div>
 
-1. الفعل المضارع في جملة "المؤمنُ **يرجو** عفو ربه" مرفوع وعلامة رفعه:
-   - أ) الضمة الظاهرة.
-   - ب) الضمة المقدرة للثقل.
-   - ج) الضمة المقدرة للتعذر.
-   - د) ثبوت النون.
+    <form id="quizForm">
+        <div class="question-section">
+            <h3>أولاً: اختر الإجابة الصحيحة</h3>
+            <div class="question">
+                <span class="question-title">1. "المؤمنُ يرجو عفو ربه" الفعل يرجو مرفوع بـ:</span>
+                <ul class="options">
+                    <li><input type="radio" name="q1" value="a"> الضمة الظاهرة</li>
+                    <li><input type="radio" name="q1" value="b"> الضمة المقدرة للثقل</li>
+                    <li><input type="radio" name="q1" value="c"> الضمة المقدرة للتعذر</li>
+                    <li><input type="radio" name="q1" value="d"> ثبوت النون</li>
+                </ul>
+            </div>
+            </div>
 
-2. "الأطباءُ لن **يقصروا** في واجبهم". علامة نصب الفعل "يقصروا" هي:
-   - أ) الفتحة.
-   - ب) السكون.
-   - ج) حذف النون.
-   - د) ثبوت النون.
+        <div class="question-section">
+            <h3>ثانياً: أكمل الفراغ</h3>
+            <p>1. يجب عليك أن <input type="text" name="fill1"> (يجتهد) كي تنجح.</p>
+            <p>2. لا <input type="text" name="fill2"> (تنسى) ذكر الله.</p>
+            </div>
 
-3. أي من الجمل التالية تحتوي على فعل مضارع مجزوم بحذف حرف العلة؟
-   - أ) لا تلعبْ في الشارع.
-   - ب) لم يرمِ اللاعب الكرة.
-   - ج) لن يسعى الطالب للفشل.
-   - د) لم يكتبوا الدرس.
+        <div class="question-section">
+            <h3>ثالثاً: صح أم خطأ</h3>
+            <p>1. علامة جزم الفعل المعتل الآخر هي السكون ( <input type="radio" name="tf1" value="t"> صح | <input type="radio" name="tf1" value="f"> خطأ )</p>
+            </div>
 
-4. الفعل "تذهبين" عند دخول أداة الجزم "لم" عليه يصبح:
-   - أ) لم تذهبين.
-   - ب) لم تذهبي.
-   - ج) لم تذهبن.
-   - د) لم تذهبوا.
+        <button type="button" class="submit-btn" onclick="submitQuiz()">تسليم الإجابات</button>
+    </form>
+</div>
 
-5. حرف النصب الذي يفيد "التعليل" هو:
-   - أ) لن.
-   - ب) أن.
-   - ج) كي.
-   - د) إذن.
+<script>
+    // برمجة المؤقت التنازلي (30 دقيقة)
+    let timeInMinutes = 30;
+    let currentTime = timeInMinutes * 60;
+    const timerElement = document.getElementById('timer');
 
-6. "إنْ **تذاكرْ** تنجحْ". الفعل "تذاكر" مجزوم لأنه:
-   - أ) مسبوق بـ "لم".
-   - ب) فعل الشرط.
-   - ج) جواب الشرط.
-   - د) مسبوق بـ "لا" الناهية.
+    const countdown = setInterval(() => {
+        const minutes = Math.floor(currentTime / 60);
+        let seconds = currentTime % 60;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        
+        timerElement.innerHTML = `الوقت المتبقي: ${minutes}:${seconds}`;
+        
+        if (currentTime <= 0) {
+            clearInterval(countdown);
+            alert("انتهى الوقت! سيتم تسليم الإجابات تلقائياً.");
+            submitQuiz();
+        } else {
+            currentTime--;
+        }
+    }, 1000);
 
-7. يرفع الفعل المضارع بثبوت النون إذا كان:
-   - أ) معتل الآخر بالواو.
-   - ب) صحيح الآخر.
-   - ج) من الأفعال الخمسة.
-   - د) اتصلت به نون النسوة.
+    function submitQuiz() {
+        const name = document.getElementById('studentName').value;
+        const studentClass = document.getElementById('studentClass').value;
+        
+        if(!name || !studentClass) {
+            alert("يرجى إدخال الاسم والفصل أولاً!");
+            return;
+        }
 
----
+        alert(`تم استلام إجاباتك يا ${name} من فصل ${studentClass}. شكراً لك!`);
+        // هنا يمكن إضافة كود لإرسال البيانات لقاعدة بيانات أو بريد إلكتروني
+    }
+</script>
 
-### ثانياً: أكمل الفراغ (7 أسئلة)
-
-1. يجب على الطالب أن __________ (يواظب) على دروسه. (اضبط الفعل)
-2. لا __________ (تنسى) ذكر الله في كل وقت. (اكتب الفعل مجزوماً)
-3. العمال __________ (يخلص) في عملهم. (ارفع الفعل بثبوت النون)
-4. نم مبكراً لتستيقظَ مبكراً. نوع اللام هنا هي لام __________ .
-5. لم __________ (يدعو) الكسول إلى العمل. (اكتب الفعل مجزوماً)
-6. لن __________ (ينال) الظالمُ مراده. (اضبط الفعل بالفتحة)
-7. المتسابقان __________ (يجري) بسرعة نحو الهدف. (ارفع الفعل)
-
----
-
-### ثالثاً: صح أم خطأ (7 أسئلة)
-
-1. ( ) علامة جزم الفعل المضارع صحيح الآخر هي السكون.
-2. ( ) "لام الأمر" هي أداة من أدوات نصب الفعل المضارع.
-3. ( ) ترفع الأفعال الخمسة بثبوت النون وتنصب بحذفها.
-4. ( ) الفعل المضارع "يسعى" منصوب بالفتحة الظاهرة.
-5. ( ) "لا" النافية تجزم الفعل المضارع.
-6. ( ) يجزم الفعل المضارع إذا وقع جواباً للطلب.
-7. ( ) علامة نصب الفعل المضارع المعتل الآخر بالألف هي الفتحة المقدرة.
-
----
-
-### رابعاً: مِثّل لما يلي بجملة مفيدة (7 حالات)
-
-1. فعل مضارع منصوب بـ "حتى".
-2. فعل مضارع مجزوم بـ "لا الناهية".
-3. فعل مضارع مرفوع بضمة مقدرة للثقل.
-4. فعل من الأفعال الخمسة في حالة جزم.
-5. فعل مضارع صحيح الآخر منصوب بـ "أن".
-6. فعل مضارع معتل الآخر بالياء في حالة رفع.
-7. أداة شرط جازمة تجزم فعلين.
-
----
-
-### خامساً: استخرج من النص (7 استخراجات)
-
-**النص:**
-> "يا أيها الطلاب، **اجتهدوا** لـ **تتفوقوا**، ومَن **يطلبْ** العُلا **يسهرْ** الليالي، فالمجد لا **يأتي** بالكسل، ولن **تصلوا** إلى مبتغاكم إلا بالصبر، فـ **لتحرصوا** على الوقت."
-
-1. فعل مضارع منصوب بلام التعليل: __________
-2. فعل مضارع مرفوع بضمة مقدرة: __________
-3. فعل مضارع وقع "فعل شرط": __________
-4. فعل مضارع وقع "جواب شرط": __________
-5. فعل مضارع منصوب بـ "لن": __________
-6. فعل مضارع مجزوم بـ "لام الأمر": __________
-7. علامة إعراب الفعل "تصلوا": __________
-
----
-
-## مفتاح الإجابات المقترح:
-*(يمكنك وضعه في ملف منفصل باسم `ANSWERS.md`)*
-1. **الاختيارات:** 1-ج، 2-ج، 3-ب، 4-ب، 5-ج، 6-ب، 7-ج.
-2. **الصح والخطأ:** 1-صح، 2-خطأ (جزم)، 3-صح، 4-خطأ (مقدرة)، 5-خطأ (لا تؤثر)، 6-صح، 7-صح.
+</body>
+</html>
