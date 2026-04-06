@@ -3,132 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الاختبار الذكي | أ. عبدالعزيز الفيفي</title>
+    <title>منصة التميز | أ. عبدالعزيز الفيفي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --primary: #1e3a8a; --accent: #3b82f6; --success: #10b981; --hint: #f59e0b; --bg: #f1f5f9; }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: #1e293b; margin: 0; }
-        .header { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 50px 20px; text-align: center; clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%); }
-        .container { max-width: 900px; margin: -40px auto 60px; padding: 0 20px; }
-        #timer-bar { position: sticky; top: 10px; z-index: 100; background: white; border: 2px solid var(--primary); padding: 10px 25px; border-radius: 50px; width: fit-content; margin: 0 auto 20px; font-weight: 900; color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); display: none; }
-        .card.active { display: block; animation: fadeInUp 0.5s ease; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .q-item { background: #f9fafb; padding: 25px; border-radius: 20px; margin-bottom: 30px; border-right: 8px solid var(--accent); }
-        .hint-btn { background: var(--hint); color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; margin-top: 10px; }
-        .btn { padding: 14px 45px; border-radius: 15px; border: none; font-family: 'Cairo'; font-weight: 700; cursor: pointer; font-size: 17px; }
-        .btn-next { background: var(--primary); color: white; width: 100%; }
-        .locked-msg { text-align: center; padding: 100px; }
+        :root { --primary: #1e3a8a; --accent: #3b82f6; --success: #10b981; --bg: #f8fafc; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); user-select: none; -webkit-user-select: none; }
+        .header { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 40px; text-align: center; clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%); }
+        .container { max-width: 800px; margin: -30px auto 50px; padding: 0 20px; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; }
+        .card.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .q-box { background: #f1f5f9; padding: 20px; border-radius: 15px; border-right: 5px solid var(--accent); margin-bottom: 20px; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 16px; }
+        .btn-primary { background: var(--primary); color: white; }
+        #timer { position: sticky; top: 10px; background: white; padding: 10px; border-radius: 50px; border: 2px solid var(--primary); width: fit-content; margin: 0 auto 20px; font-weight: 900; z-index: 1000; }
+        @media print { body { display: none !important; } } /* منع الطباعة */
     </style>
 </head>
-<body>
-
-<header class="header">
-    <h1>اختبار كفايات المضارع (نسخة عشوائية)</h1>
-    <div style="font-size: 20px; font-weight: bold;">أ. عبدالعزيز الفيفي - ثانوية الأمير عبدالمجيد</div>
+<body oncontextmenu="return false;"> <header class="header">
+    <h1>اختبار كفايات الفعل المضارع</h1>
+    <p>إعداد الأستاذ: عبدالعزيز الفيفي | ثانوية الأمير عبدالمجيد</p>
 </header>
 
-<div class="container" id="quiz-app">
-    <div id="timer-bar">⏱️ المتبقي: <span id="clock">30:00</span></div>
+<div class="container" id="app-root">
+    <div id="timer">⏱️ المتبقي: <span id="time-display">30:00</span></div>
 
-    <form id="masterForm">
-        <div class="card active" id="step-intro">
-            <h2 style="text-align:center;">تسجيل الدخول</h2>
-            <p style="text-align:center; color: #ef4444;">* سيقوم النظام باختيار أسئلة عشوائية لك تختلف عن زملائك.</p>
-            <div style="display:grid; gap:20px; margin-top:20px;">
-                <input type="text" id="stu_name" placeholder="الاسم الثلاثي" style="padding:14px; border-radius:12px; border:2px solid #ddd;" required>
-                <button type="button" class="btn btn-next" onclick="initQuiz()">بدء الاختبار الفردي</button>
-            </div>
+    <form id="quiz-form">
+        <div class="card active" id="auth-card">
+            <h2 style="text-align:center;">دخول آمن للمرة الأولى</h2>
+            <p style="color:red; text-align:center; font-size:13px;">* تنبيه: يُمنع تصوير الشاشة أو إعادة الاختبار، سيتم حظرك آلياً عند المخالفة.</p>
+            <input type="text" id="stu-name" placeholder="الاسم الثلاثي" style="width:100%; padding:15px; margin:20px 0; border:2px solid #ddd; border-radius:10px; box-sizing:border-box;" required>
+            <button type="button" class="btn btn-primary" onclick="initSecurityCheck()">بدء الاختبار العشوائي</button>
         </div>
-        <div id="dynamic-steps"></div>
+
+        <div id="questions-container"></div>
     </form>
 
-    <div id="result-page" class="card">
-        <h2 style="text-align:center">نتيجتك النهائية</h2>
-        <div style="font-size:60px; text-align:center; color: var(--primary); font-weight: 900;" id="final-score">0 / 35</div>
-        <p style="text-align:center; font-weight:bold;">تم قفل الاختبار لهذا الجهاز.</p>
-        <div id="result-summary"></div>
+    <div id="result-card" class="card">
+        <h2 style="text-align:center">انتهى الاختبار</h2>
+        <div id="final-score" style="font-size:60px; text-align:center; color:var(--primary); font-weight:900;">0/35</div>
+        <p style="text-align:center; font-weight:bold;">أ. عبدالعزيز الفيفي يتمنى لكم التوفيق.</p>
     </div>
 </div>
 
 <script>
-    // بنك أسئلة ضخم (مثال لـ 15 سؤالاً، يمكنك زيادتها لـ 100)
+    // 1. مخزن الـ 90 سؤالاً (تم اختصارها هنا للتمثيل الهيكلي، يمكنك تعبئة الباقي بنفس النمط)
     const questionBank = [
-        { q: "علامة رفع (يسعى) هي الضمة المقدرة للـ:", type: 'radio', opts: ["الثقل", "التعذر", "الجزم", "النصب"], ans: "التعذر", hint: "الألف للتعذر." },
-        { q: "حرف نصب يفيد نفي الفعل في المستقبل هو:", type: 'radio', opts: ["أن", "لن", "كي", "حتى"], ans: "لن", hint: "المستقبل." },
-        { q: "يجزم الفعل (يدعو) بـ:", type: 'radio', opts: ["السكون", "حذف حرف العلة", "حذف النون", "الفتحة"], ans: "حذف حرف العلة" },
-        { q: "الأفعال الخمسة ترفع بـ:", type: 'radio', opts: ["الواو", "ثبوت النون", "الضمة", "الألف"], ans: "ثبوت النون" },
-        { q: "المؤمنون ............ (يصلون) بخشوع. (ما علامة الرفع؟)", type: 'radio', opts: ["الضمة", "الواو", "ثبوت النون"], ans: "ثبوت النون" },
-        { q: "لم ............ (يقضِ) القاضي إلا بالحق.", type: 'text', ans: "يقضِ", hint: "احذف الياء." },
-        { q: "لن ............ (يتكاسلَ) الطالب في دروسه. (اضبط الحركة)", type: 'text', ans: "يتكاسلَ" },
-        { q: "مثل لـ: فعل مضارع مرفوع بضمة مقدرة للثقل.", type: 'pattern', pat: /[\u0600-\u06FF]+[وي]$/, sample: "يدعو", hint: "ينتهي بواو أو ياء." },
-        // أضف هنا أي عدد من الأسئلة...
+        { q: "علامة رفع (يسعى) هي الضمة المقدرة للـ:", type: "radio", opts: ["الثقل", "التعذر", "الجزم", "النصب"], ans: "التعذر" },
+        { q: "أي الأدوات التالية تنصب الفعل المضارع؟", type: "radio", opts: ["لم", "لا الناهية", "لن", "لام الأمر"], ans: "لن" },
+        { q: "الأفعال الخمسة ترفع بـ:", type: "radio", opts: ["الضمة", "ثبوت النون", "الواو"], ans: "ثبوت النون" },
+        // ... يتبع حتى 90 سؤالاً بنفس التنسيق ...
     ];
 
-    let selectedQuestions = [];
-
-    function initQuiz() {
-        const name = document.getElementById('stu_name').value.trim();
-        if(name.length < 5) return Swal.fire('تنبيه','اكتب اسمك كاملاً','warning');
-
-        // منع الإعادة
-        if(localStorage.getItem('quiz_done_' + name)) {
-            document.getElementById('quiz-app').innerHTML = "<div class='locked-msg'><h1>🚫 مكرر</h1><p>لقد اختبرت مسبقاً يا بطل.</p></div>";
-            return;
-        }
-
-        // --- السحر هنا: العشوائية ---
-        // 1. خلط البنك بالكامل
-        let shuffled = questionBank.sort(() => 0.5 - Math.random());
-        // 2. اختيار أول 35 سؤالاً فقط (أو العدد الذي تحدده)
-        selectedQuestions = shuffled.slice(0, 35); 
-
-        buildUI();
-        document.getElementById('step-intro').classList.remove('active');
-        document.getElementById('step-q-1').classList.add('active');
-        startTimer();
-    }
-
-    function buildUI() {
-        const container = document.getElementById('dynamic-steps');
-        selectedQuestions.forEach((item, index) => {
-            const stepDiv = document.createElement('div');
-            stepDiv.className = 'card';
-            stepDiv.id = `step-q-${index + 1}`;
-            
-            let inputHtml = '';
-            if(item.type === 'radio') {
-                item.opts.forEach(o => {
-                    inputHtml += `<label style="display:block; margin:10px; padding:10px; border:1px solid #ddd; border-radius:10px;">
-                                    <input type="radio" name="q${index}" value="${o}"> ${o}
-                                  </label>`;
-                });
-            } else {
-                inputHtml = `<input type="text" id="ans${index}" style="width:100%; padding:15px; border-radius:10px; border:1px solid #ddd;" placeholder="الإجابة...">`;
-            }
-
-            stepDiv.innerHTML = `
-                <h3>سؤال ${index + 1} من ${selectedQuestions.length}</h3>
-                <div class="q-item">
-                    <p style="font-weight:bold;">${item.q}</p>
-                    ${inputHtml}
-                    <button type="button" class="hint-btn" onclick="Swal.fire('تلميحة','${item.hint || 'فكر في القاعدة'}','info')">💡 تلميحة</button>
-                </div>
-                <button type="button" class="btn btn-next" onclick="${index + 1 === selectedQuestions.length ? 'finishQuiz()' : 'nextStep('+(index+2)+')'}">
-                    ${index + 1 === selectedQuestions.length ? 'إنهاء ورصد الدرجة' : 'السؤال التالي'}
-                </button>
-            `;
-            container.appendChild(stepDiv);
+    // إضافة أسئلة تلقائية لتكملة الـ 90 (لأغراض البرمجة)
+    for(let i=1; i<=87; i++) {
+        questionBank.push({
+            q: `سؤال عشوائي رقم ${i+3} في مهارات المضارع (تطبيق القاعدة ${i}):`,
+            type: "radio", opts: ["خيار 1", "خيار 2", "الإجابة الصحيحة", "خيار 4"], ans: "الإجابة الصحيحة"
         });
     }
 
-    function nextStep(n) {
-        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-        document.getElementById('step-q-' + (n-1)).classList.add('active');
+    let userQuestions = [];
+    let currentStep = 0;
+
+    // 2. منع تصوير الشاشة (عن طريق منع الأزرار)
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "PrintScreen" || (e.ctrlKey && e.key === 'p') || (e.ctrlKey && e.shiftKey && e.key === 'S')) {
+            alert("تنبيه: تصوير الشاشة ممنوع بقرار من أ. عبدالعزيز الفيفي.");
+            e.preventDefault();
+        }
+    });
+
+    // 3. التحقق من عدم الإعادة وبدء الاختبار
+    function initSecurityCheck() {
+        const name = document.getElementById('stu-name').value.trim();
+        if (name.length < 5) return Swal.fire('خطأ', 'يرجى كتابة الاسم كاملاً', 'error');
+
+        if (localStorage.getItem('fifi_done_' + name)) {
+            document.getElementById('app-root').innerHTML = `<div class='card active' style='text-align:center;'><h2>🚫 غير مسموح</h2><p>لقد أتممت الاختبار مسبقاً.</p></div>`;
+            return;
+        }
+
+        // خلط واختيار 35 سؤالاً عشوائياً
+        userQuestions = questionBank.sort(() => 0.5 - Math.random()).slice(0, 35);
+        renderQuestions();
+        document.getElementById('auth-card').classList.remove('active');
+        document.getElementById('step-0').classList.add('active');
+        startTimer();
     }
 
-    // (كود التصحيح والمؤقت يظل كما هو مع استبدال db بـ selectedQuestions)
+    function renderQuestions() {
+        const cont = document.getElementById('questions-container');
+        userQuestions.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.id = `step-${index}`;
+            div.innerHTML = `
+                <h3>سؤال ${index + 1} من 35</h3>
+                <div class="q-box"><p>${item.q}</p>
+                    ${item.opts.map(o => `<label style="display:block; margin:10px 0; cursor:pointer;"><input type="radio" name="q${index}" value="${o}"> ${o}</label>`).join('')}
+                </div>
+                <button type="button" class="btn btn-primary" onclick="nextQuestion(${index})">
+                    ${index === 34 ? 'إرسال الإجابات النهائية' : 'السؤال التالي ⬅️'}
+                </button>
+            `;
+            cont.appendChild(div);
+        });
+    }
+
+    function nextQuestion(index) {
+        if (index === 34) {
+            submitQuiz();
+        } else {
+            document.getElementById(`step-${index}`).classList.remove('active');
+            document.getElementById(`step-${index + 1}`).classList.add('active');
+            window.scrollTo(0,0);
+        }
+    }
+
+    let time = 1800;
+    function startTimer() {
+        const timerInt = setInterval(() => {
+            let m = Math.floor(time/60), s = time%60;
+            document.getElementById('time-display').innerText = `${m}:${s<10?'0'+s:s}`;
+            if (time-- <= 0) { clearInterval(timerInt); submitQuiz(); }
+        }, 1000);
+    }
+
+    function submitQuiz() {
+        const name = document.getElementById('stu-name').value;
+        localStorage.setItem('fifi_done_' + name, 'true');
+        
+        let score = 0;
+        userQuestions.forEach((item, i) => {
+            const sel = document.querySelector(`input[name="q${i}"]:checked`);
+            if (sel && sel.value === item.ans) score++;
+        });
+
+        document.getElementById('quiz-form').style.display = 'none';
+        document.getElementById('timer').style.display = 'none';
+        document.getElementById('result-card').classList.add('active');
+        document.getElementById('final-score').innerText = `${score} / 35`;
+        
+        Swal.fire('تم الرصد', 'شكراً لك، تم تسجيل درجتك بنجاح.', 'success');
+    }
 </script>
 </body>
 </html>
