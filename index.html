@@ -36,7 +36,6 @@
     </style>
 </head>
 <script>
-    // القفل الفوري قبل تحميل أي عنصر
     if (localStorage.getItem('alfaifi_quiz_lock')) {
         window.stop(); 
         document.documentElement.innerHTML = `
@@ -185,13 +184,19 @@ function generateSections() {
 }
 
 function nextSection(current) {
-    let answeredAll = true;
+    let unAnsweredInCurrent = [];
     for(let q = 0; q < 7; q++) {
         const idx = ((current-1) * 7) + q;
-        if(examData[idx].type === 'radio') { if(!document.querySelector(`input[name="q${idx}"]:checked`)) answeredAll = false; }
-        else { if(!document.getElementById(`ans${idx}`).value.trim()) answeredAll = false; }
+        if(examData[idx].type === 'radio') { 
+            if(!document.querySelector(`input[name="q${idx}"]:checked`)) unAnsweredInCurrent.push(idx+1); 
+        } else { 
+            if(!document.getElementById(`ans${idx}`).value.trim()) unAnsweredInCurrent.push(idx+1); 
+        }
     }
-    if(!answeredAll) { Swal.fire('عذراً','يجب الإجابة على جميع أسئلة هذا القسم قبل الانتقال','error'); return; }
+    if(unAnsweredInCurrent.length > 0) { 
+        Swal.fire('تنبيه','يرجى الإجابة على جميع أسئلة هذا القسم أولاً. الأسئلة المفقودة: ' + unAnsweredInCurrent.join(', '),'error'); 
+        return; 
+    }
     document.getElementById(`step${current}`).classList.remove('active');
     document.getElementById(`step${current+1}`).classList.add('active');
     updateProgress(current+1); window.scrollTo(0,0);
@@ -214,27 +219,46 @@ function smartCheck(u, a) {
 }
 
 function processResults() {
+    // فحص شامل لجميع الأقسام قبل الإرسال
+    let allUnanswered = [];
+    examData.forEach((item, i) => {
+        if(item.type === 'radio') {
+            if(!document.querySelector(`input[name="q${i}"]:checked`)) allUnanswered.push(i+1);
+        } else {
+            if(!document.getElementById(`ans${i}`).value.trim()) allUnanswered.push(i+1);
+        }
+    });
+
+    if(allUnanswered.length > 0) {
+        Swal.fire({
+            title: 'هناك أسئلة لم تجب عليها!',
+            text: 'يجب إكمال جميع الأسئلة للإرسال. تأكد من الأسئلة رقم: ' + allUnanswered.join(', '),
+            icon: 'warning',
+            confirmButtonText: 'حسناً، سأكملها'
+        });
+        return;
+    }
+
+    // إذا اكتملت جميع الإجابات:
     let score = 0;
     const tbody = document.querySelector('#summaryTable tbody');
     tbody.innerHTML = '';
 
     examData.forEach((item, i) => {
-        let uVal = (item.type === 'radio') ? (document.querySelector(`input[name="q${i}"]:checked`)?.value || "لا إجابة") : document.getElementById(`ans${i}`).value;
+        let uVal = (item.type === 'radio') ? document.querySelector(`input[name="q${i}"]:checked`).value : document.getElementById(`ans${i}`).value;
         let isCorrect = smartCheck(uVal, item.ans);
         if(isCorrect) score++;
         tbody.innerHTML += `<tr><td>${i+1}</td><td>${item.q}</td><td style="color:${isCorrect?'#166534':'#991b1b'}">${uVal}</td><td>${item.ans}</td><td><span class="status-badge ${isCorrect?'correct':'wrong'}">${isCorrect?'صحيح':'خطأ'}</span></td></tr>`;
     });
 
-    // القفل الفعلي عند انتهاء التصحيح
     localStorage.setItem('alfaifi_quiz_lock', 'true');
-    
     clearInterval(timer);
     document.getElementById('quizForm').style.display = 'none';
     document.getElementById('timer-bar').style.display = 'none';
     document.getElementById('resultCard').classList.add('active');
     document.getElementById('scoreBox').innerText = `${score} / 42`;
     document.getElementById('studentInfo').innerText = `الطالب: ${document.getElementById('stdName').value} | الصف: ${document.getElementById('stdClass').value}`;
-    Swal.fire('تم الانتهاء!','تم قفل الاختبار نهائياً على هذا الجهاز.','success');
+    Swal.fire('تم الانتهاء!','تم تصحيح اختبارك وقفل الجهاز بنجاح.','success');
 }
 </script>
 
