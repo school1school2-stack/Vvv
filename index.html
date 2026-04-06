@@ -35,6 +35,21 @@
         .wrong { background: #fee2e2; color: #991b1b; }
     </style>
 </head>
+<script>
+    // القفل الفوري قبل تحميل أي عنصر
+    if (localStorage.getItem('alfaifi_quiz_lock')) {
+        window.stop(); 
+        document.documentElement.innerHTML = `
+        <body style="background:#f8fafc; display:flex; align-items:center; justify-content:center; height:100vh; font-family:'Cairo'; text-align:center;">
+            <div style="background:white; padding:40px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.1); border:2px solid #ef4444;">
+                <h1 style="color:#ef4444;">🛑 وصول مرفوض</h1>
+                <p style="font-size:18px; color:#1e293b;">عذراً، لقد قمت بإنهاء هذا الاختبار مسبقاً.</p>
+                <p style="color:#64748b;">لا يسمح النظام بإعادة الاختبار من نفس الجهاز لضمان مصداقية النتائج.</p>
+                <p style="font-weight:bold; margin-top:20px;">أ. عبدالعزيز الفيفي</p>
+            </div>
+        </body>`;
+    }
+</script>
 <body>
 
 <div class="header">
@@ -55,7 +70,6 @@
                 <button type="button" class="btn btn-next" style="width:100%; margin-top:10px" onclick="startExam()">ابدأ الاختبار الآن</button>
             </div>
         </div>
-
         <div id="quizContent"></div>
     </form>
 
@@ -77,14 +91,14 @@
                 <tbody></tbody>
             </table>
         </div>
-        <button class="btn btn-next" style="width:100%; margin-top:30px" onclick="location.reload()">إعادة الاختبار</button>
+        <div style="background:#fff3cd; padding:15px; border-radius:10px; margin-top:20px; text-align:center; color:#856404; font-weight:bold; border:1px solid #ffeeba;">
+            ⚠️ تم حفظ نتيجتك وتسجيل جهازك، لن تتمكن من دخول الاختبار مرة أخرى.
+        </div>
     </div>
 </div>
 
 <script>
-// بنية الأسئلة (6 أقسام × 7 أسئلة = 42 سؤال)
 const examData = [
-    // القسم 1: اختر الإجابة الصحيحة
     { q: "علامة رفع الفعل (يذاكرون) هي:", type: 'radio', opts: ["الضمة", "ثبوت النون", "الواو", "الألف"], ans: "ثبوت النون", hint: "لأنه من الأفعال الخمسة." },
     { q: "أداة تنصب المضارع وتفيد نفي المستقبل:", type: 'radio', opts: ["لم", "لا الناهية", "لن", "كي"], ans: "لن", hint: "تذكر: لن أهملَ." },
     { q: "يجزم الفعل المضارع إذا سبقته:", type: 'radio', opts: ["أن", "لام الأمر", "حتى", "لام التعليل"], ans: "لام الأمر", hint: "لام الأمر تفيد الطلب." },
@@ -92,8 +106,6 @@ const examData = [
     { q: "يُرفع المضارع بضمة مقدرة للثقل إذا انتهى بـ:", type: 'radio', opts: ["الألف", "الواو والياء", "النون", "السين"], ans: "الواو والياء", hint: "الثقل للصوت الواوي واليائي." },
     { q: "علامة نصب الأفعال الخمسة هي:", type: 'radio', opts: ["الفتحة", "حذف النون", "السكون", "ثبوت النون"], ans: "حذف النون", hint: "تحذف النون في النصب والجزم." },
     { q: "الأداة (أنْ) هي حرف مصدر ونصب وفائدتها:", type: 'radio', opts: ["النفي", "الاستقبال", "التعليل", "الشرط"], ans: "الاستقبال", hint: "تجعل زمن الفعل مستقبلاً." },
-
-    // القسم 2: أكمل الفراغ
     { q: "يُجزم الفعل المضارع الصحيح الآخر وعلامة جزمه _______.", type: 'text', ans: "السكون", hint: "مثل: لم يكتبْ." },
     { q: "الأدوات (أن، لن، كي، حتى) تسمى أدوات _______.", type: 'text', ans: "نصب", hint: "تغير حركة المضارع للفتحة." },
     { q: "تُقدر الحركة للتعذر إذا كان الفعل ينتهي بـ _______.", type: 'text', ans: "الألف", hint: "مثل: يسعى." },
@@ -101,8 +113,6 @@ const examData = [
     { q: "لام _______ هي التي تنصب المضارع وتفيد بيان السبب.", type: 'text', ans: "التعليل", hint: "تذاكر لـتنجح." },
     { q: "علامة جزم (لم يرمِ) اللاعبُ الكرةَ هي حذف _______.", type: 'text', ans: "حرف العلة", hint: "أصل الفعل يرمي." },
     { q: "يُرفع المضارع إذا لم يسبقه ناصب ولا _______.", type: 'text', ans: "جازم", hint: "يكون في حالته الأصلية." },
-
-    // القسم 3: مثل في جملة (تصحيح ذكي للكلمة المفتاحية)
     { q: "مثل لـ: مضارع مرفوع بثبوت النون", type: 'text', ans: "يكتبون", hint: "استخدم فعلاً ينتهي بـ (ون)." },
     { q: "مثل لـ: مضارع منصوب بـ (أن)", type: 'text', ans: "أن يذاكر", hint: "أداة أن + فعل بفتحة." },
     { q: "مثل لـ: مضارع مجزوم بـ (لم)", type: 'text', ans: "لم يذهب", hint: "لم + فعل مجزوم." },
@@ -110,8 +120,6 @@ const examData = [
     { q: "مثل لـ: مضارع منصوب بـ (لن)", type: 'text', ans: "لن يكذب", hint: "لن + فعل بفتحة." },
     { q: "مثل لـ: مضارع مجزوم بـ (لا الناهية)", type: 'text', ans: "لا تهمل", hint: "لا تنهى عن فعل." },
     { q: "مثل لـ: فعل من الأفعال الخمسة مجزوم", type: 'text', ans: "لم يلعبوا", hint: "لم + فعل محذوف النون." },
-
-    // القسم 4: أعرب ما تحته خط (اختيار من متعدد للسهولة والدقة)
     { q: "إعراب (يشرحان) في: المعلمان يشرحان بجد.", type: 'radio', opts: ["مرفوع بالضمة", "مرفوع بثبوت النون", "منصوب بالفتحة", "مجزوم بالسكون"], ans: "مرفوع بثبوت النون", hint: "اتصل به ألف الاثنين." },
     { q: "إعراب (تنسَ) في: لا تنسَ الصلاة.", type: 'radio', opts: ["مجزوم بحذف حرف العلة", "مجزوم بالسكون", "منصوب بالفتحة", "مرفوع بالضمة"], ans: "مجزوم بحذف حرف العلة", hint: "سبق بـ لا الناهية." },
     { q: "إعراب (لن تنالوا) في قوله تعالى: لن تنالوا البر.", type: 'radio', opts: ["منصوب بحذف النون", "منصوب بالفتحة", "مرفوع بثبوت النون", "مجزوم بحذف النون"], ans: "منصوب بحذف النون", hint: "سبق بـ لن (أداة نصب)." },
@@ -119,8 +127,6 @@ const examData = [
     { q: "إعراب (يذاكرَ) في: يجب أن يذاكرَ الطالب.", type: 'radio', opts: ["منصوب بالفتحة", "مرفوع بالضمة", "مجزوم بالسكون", "مبني"], ans: "منصوب بالفتحة", hint: "سبق بـ أن." },
     { q: "علامة جزم (لم يلدْ):", type: 'radio', opts: ["السكون", "حذف النون", "حذف حرف العلة", "الفتحة"], ans: "السكون", hint: "لأنه فعل صحيح الآخر." },
     { q: "إعراب (تنجحي) في: اجتهدي لتنجحي.", type: 'radio', opts: ["منصوب بحذف النون", "منصوب بالفتحة", "مرفوع بثبوت النون", "مجزوم بحذف النون"], ans: "منصوب بحذف النون", hint: "لام التعليل + ياء المخاطبة." },
-
-    // القسم 5: استخرج الفعل وحالته
     { q: "استخرج الفعل المضارع من: (مَن يذاكرْ ينجحْ)", type: 'text', ans: "يذاكر", hint: "الفعل الذي يأتي بعد أداة الشرط." },
     { q: "ما حالة الفعل (ينجحْ) في الجملة السابقة؟", type: 'text', ans: "مجزوم", hint: "لأنه جواب الشرط." },
     { q: "استخرج الفعل المنصوب من: (يريد الله أن يخفف عنكم)", type: 'text', ans: "يخفف", hint: "ابحث عن الفعل بعد 'أن'." },
@@ -128,8 +134,6 @@ const examData = [
     { q: "استخرج الفعل المجزوم من: (لتصبرْ على الشدائد)", type: 'text', ans: "تصبر", hint: "جاء بعد لام الأمر." },
     { q: "ما علامة نصب الفعل (يرميَ) في: لن يرميَ؟", type: 'text', ans: "الفتحة", hint: "تظهر على الياء لخفتها." },
     { q: "استخرج الأداة الجازمة من: (لم يلدْ ولم يولدْ)", type: 'text', ans: "لم", hint: "حرف نفي وجزم." },
-
-    // القسم 6: صح وخطأ
     { q: "ثبوت النون هي علامة رفع فرعية للأفعال الخمسة.", type: 'radio', opts: ["صح", "خطأ"], ans: "صح", hint: "قاعدة الأفعال الخمسة." },
     { q: "الضمة تُقدر على الألف للثقل.", type: 'radio', opts: ["صح", "خطأ"], ans: "خطأ", hint: "على الألف تكون للتعذر." },
     { q: "لام التعليل تجزم الفعل المضارع.", type: 'radio', opts: ["صح", "خطأ"], ans: "خطأ", hint: "لام التعليل تنصب." },
@@ -139,19 +143,17 @@ const examData = [
     { q: "علامة جزم الأفعال الخمسة هي السكون.", type: 'radio', opts: ["صح", "خطأ"], ans: "خطأ", hint: "علامتها حذف النون." }
 ];
 
-let currentStep = 0;
 let timer;
 
 function startExam() {
     const name = document.getElementById('stdName').value;
     const cls = document.getElementById('stdClass').value;
     if(!name || !cls) return Swal.fire('تنبيه','أكمل بياناتك أولاً','warning');
-    
     generateSections();
     document.getElementById('step0').style.display = 'none';
     document.getElementById('step1').classList.add('active');
     updateProgress(1);
-    startTimer(2700); // 45 دقيقة
+    startTimer(2700);
 }
 
 function generateSections() {
@@ -160,23 +162,19 @@ function generateSections() {
         const div = document.createElement('div');
         div.className = 'card'; div.id = `step${s+1}`;
         div.innerHTML = `<h2 style="text-align:center; color:var(--primary);">القسم ${s+1} من 6</h2>`;
-        
         for (let q = 0; q < 7; q++) {
             const idx = (s * 7) + q;
             const item = examData[idx];
             let qHtml = `<div class="q-box"><button type="button" class="hint-btn" onclick="Swal.fire('تلميحة','${item.hint}','info')">؟</button>
-                         <span style="font-weight:bold">س${q+1}: ${item.q}</span>`;
+                         <span style="font-weight:bold">س${idx+1}: ${item.q}</span>`;
             if(item.type === 'radio') {
                 qHtml += `<div class="options-grid">`;
                 item.opts.forEach(o => qHtml += `<label class="opt-label"><input type="radio" name="q${idx}" value="${o}"> ${o}</label>`);
                 qHtml += `</div>`;
-            } else {
-                qHtml += `<input type="text" id="ans${idx}" placeholder="اكتب الإجابة هنا...">`;
-            }
+            } else { qHtml += `<input type="text" id="ans${idx}" placeholder="اكتب الإجابة هنا...">`; }
             qHtml += `</div>`;
             div.innerHTML += qHtml;
         }
-
         const isLast = (s === 5);
         div.innerHTML += `<div class="nav-controls">
             ${isLast ? `<button type="button" class="btn btn-finish" onclick="processResults()">إنهاء وتصحيح الاختبار</button>` : 
@@ -187,32 +185,19 @@ function generateSections() {
 }
 
 function nextSection(current) {
-    // التحقق من الإجابة على جميع الأسئلة في القسم الحالي
     let answeredAll = true;
     for(let q = 0; q < 7; q++) {
         const idx = ((current-1) * 7) + q;
-        const item = examData[idx];
-        if(item.type === 'radio') {
-            if(!document.querySelector(`input[name="q${idx}"]:checked`)) answeredAll = false;
-        } else {
-            if(!document.getElementById(`ans${idx}`).value.trim()) answeredAll = false;
-        }
+        if(examData[idx].type === 'radio') { if(!document.querySelector(`input[name="q${idx}"]:checked`)) answeredAll = false; }
+        else { if(!document.getElementById(`ans${idx}`).value.trim()) answeredAll = false; }
     }
-
-    if(!answeredAll) {
-        Swal.fire('عذراً','يجب الإجابة على جميع أسئلة هذا القسم قبل الانتقال','error');
-        return;
-    }
-
+    if(!answeredAll) { Swal.fire('عذراً','يجب الإجابة على جميع أسئلة هذا القسم قبل الانتقال','error'); return; }
     document.getElementById(`step${current}`).classList.remove('active');
     document.getElementById(`step${current+1}`).classList.add('active');
-    updateProgress(current+1);
-    window.scrollTo(0,0);
+    updateProgress(current+1); window.scrollTo(0,0);
 }
 
-function updateProgress(step) {
-    document.getElementById('progress-fill').style.width = (step / 6) * 100 + "%";
-}
+function updateProgress(step) { document.getElementById('progress-fill').style.width = (step / 6) * 100 + "%"; }
 
 function startTimer(sec) {
     timer = setInterval(() => {
@@ -225,24 +210,10 @@ function startTimer(sec) {
 function smartCheck(u, a) {
     if(!u) return false;
     const clean = (s) => s.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '').trim();
-    // التصحيح الذكي: إذا كانت الإجابة الصحيحة جزءاً من إجابة الطالب (للمثلة) أو مطابقة تماماً
     return clean(u).includes(clean(a)) || clean(u) === clean(a);
 }
 
 function processResults() {
-    // التحقق من القسم الأخير قبل الإنهاء
-    let answeredAll = true;
-    for(let q = 35; q < 42; q++) {
-        const item = examData[q];
-        if(item.type === 'radio') {
-            if(!document.querySelector(`input[name="q${q}"]:checked`)) answeredAll = false;
-        } else {
-            if(!document.getElementById(`ans${q}`).value.trim()) answeredAll = false;
-        }
-    }
-    if(!answeredAll) { return Swal.fire('تنبيه','يرجى إكمال أسئلة القسم الأخير','error'); }
-
-    clearInterval(timer);
     let score = 0;
     const tbody = document.querySelector('#summaryTable tbody');
     tbody.innerHTML = '';
@@ -251,22 +222,19 @@ function processResults() {
         let uVal = (item.type === 'radio') ? (document.querySelector(`input[name="q${i}"]:checked`)?.value || "لا إجابة") : document.getElementById(`ans${i}`).value;
         let isCorrect = smartCheck(uVal, item.ans);
         if(isCorrect) score++;
-
-        tbody.innerHTML += `<tr>
-            <td>${i+1}</td>
-            <td>${item.q}</td>
-            <td style="color:${isCorrect?'#166534':'#991b1b'}">${uVal}</td>
-            <td style="font-weight:bold">${item.ans}</td>
-            <td><span class="status-badge ${isCorrect?'correct':'wrong'}">${isCorrect?'صحيح':'خطأ'}</span></td>
-        </tr>`;
+        tbody.innerHTML += `<tr><td>${i+1}</td><td>${item.q}</td><td style="color:${isCorrect?'#166534':'#991b1b'}">${uVal}</td><td>${item.ans}</td><td><span class="status-badge ${isCorrect?'correct':'wrong'}">${isCorrect?'صحيح':'خطأ'}</span></td></tr>`;
     });
 
+    // القفل الفعلي عند انتهاء التصحيح
+    localStorage.setItem('alfaifi_quiz_lock', 'true');
+    
+    clearInterval(timer);
     document.getElementById('quizForm').style.display = 'none';
     document.getElementById('timer-bar').style.display = 'none';
     document.getElementById('resultCard').classList.add('active');
     document.getElementById('scoreBox').innerText = `${score} / 42`;
     document.getElementById('studentInfo').innerText = `الطالب: ${document.getElementById('stdName').value} | الصف: ${document.getElementById('stdClass').value}`;
-    Swal.fire('تم الانتهاء!','تم تصحيح اختبارك بنجاح، اطلع على التقرير في الأسفل','success');
+    Swal.fire('تم الانتهاء!','تم قفل الاختبار نهائياً على هذا الجهاز.','success');
 }
 </script>
 
