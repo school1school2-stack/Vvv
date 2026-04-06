@@ -2,96 +2,187 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>اختبار الفعل المضارع الشامل</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1, h2 { color: #2c3e50; text-align: center; }
-        .student-info { background: #e8f4fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; }
-        input[type="text"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 1; }
-        #timer { font-size: 20px; font-weight: bold; color: #e74c3c; text-align: center; position: sticky; top: 10px; background: white; padding: 10px; border: 2px solid #e74c3c; border-radius: 50px; }
-        .question-section { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
-        .question-title { font-weight: bold; color: #2980b9; margin-bottom: 10px; display: block; }
-        .options { list-style: none; padding: 0; }
-        .options li { margin-bottom: 8px; }
-        .submit-btn { display: block; width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; }
-        .submit-btn:hover { background: #219150; }
+        :root { --primary: #2c3e50; --secondary: #3498db; --success: #27ae60; --danger: #e74c3c; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h1 { color: var(--primary); text-align: center; border-bottom: 3px solid var(--secondary); padding-bottom: 10px; }
+        
+        .header-info { display: flex; gap: 15px; margin-bottom: 20px; background: #ecf0f1; padding: 20px; border-radius: 10px; }
+        input[type="text"] { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        
+        #timer-box { position: sticky; top: 10px; z-index: 100; background: var(--danger); color: white; text-align: center; padding: 10px; border-radius: 50px; font-size: 20px; font-weight: bold; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        .section { margin-bottom: 40px; padding: 20px; border: 1px solid #eee; border-radius: 10px; }
+        .section-title { background: var(--secondary); color: white; padding: 10px 20px; border-radius: 5px; margin-top: -35px; margin-bottom: 20px; display: inline-block; }
+        
+        .question { margin-bottom: 20px; padding: 10px; background: #fafafa; border-right: 5px solid var(--secondary); }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .option-item { background: white; padding: 8px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; }
+        
+        .input-q { border: none; border-bottom: 2px solid var(--secondary); padding: 5px; width: 150px; text-align: center; font-weight: bold; }
+        
+        .submit-btn { width: 100%; padding: 20px; background: var(--success); color: white; border: none; border-radius: 10px; font-size: 22px; cursor: pointer; transition: 0.3s; }
+        .submit-btn:hover { background: #219150; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>اختبار قواعد اللغة العربية (الفعل المضارع)</h1>
-    
-    <div class="student-info">
-        <input type="text" id="studentName" placeholder="اسم الطالب الثلاثي..." required>
-        <input type="text" id="studentClass" placeholder="الفصل..." required>
+    <h1>اختبار حالات الفعل المضارع</h1>
+
+    <div class="header-info">
+        <input type="text" id="studentName" placeholder="اسم الطالب الكامل" required>
+        <input type="text" id="studentClass" placeholder="الفصل (مثلاً: 1/2)" required>
     </div>
 
-    <div id="timer">الوقت المتبقي: 30:00</div>
+    <div id="timer-box">الوقت المتبقي: <span id="timer">30:00</span></div>
 
     <form id="quizForm">
-        <div class="question-section">
-            <h3>أولاً: اختر الإجابة الصحيحة</h3>
-            <div class="question">
-                <span class="question-title">1. "المؤمنُ يرجو عفو ربه" الفعل يرجو مرفوع بـ:</span>
-                <ul class="options">
-                    <li><input type="radio" name="q1" value="a"> الضمة الظاهرة</li>
-                    <li><input type="radio" name="q1" value="b"> الضمة المقدرة للثقل</li>
-                    <li><input type="radio" name="q1" value="c"> الضمة المقدرة للتعذر</li>
-                    <li><input type="radio" name="q1" value="d"> ثبوت النون</li>
-                </ul>
+        <div class="section">
+            <div class="section-title">أولاً: اختر الإجابة الصحيحة (7 أسئلة)</div>
+            <div class="question">1. علامة رفع الفعل "يدعو" في جملة "يدعو المؤمن ربه":
+                <div class="options">
+                    <label class="option-item"><input type="radio" name="q1" value="1"> الضمة الظاهرة</label>
+                    <label class="option-item"><input type="radio" name="q1" value="2"> الضمة المقدرة للثقل</label>
+                    <label class="option-item"><input type="radio" name="q1" value="3"> الضمة المقدرة للتعذر</label>
+                    <label class="option-item"><input type="radio" name="q1" value="4"> ثبوت النون</label>
+                </div>
             </div>
+            <div class="question">2. "لن تنالوا البر حتى تنفقوا..." علامة نصب "تنالوا" هي:
+                <div class="options">
+                    <label class="option-item"><input type="radio" name="q2" value="1"> الفتحة</label>
+                    <label class="option-item"><input type="radio" name="q2" value="2"> حذف حرف العلة</label>
+                    <label class="option-item"><input type="radio" name="q2" value="3"> حذف النون</label>
+                    <label class="option-item"><input type="radio" name="q2" value="4"> السكون</label>
+                </div>
             </div>
+            <div class="question">3. الفعل المجزوم بـ "لم" وعلامة جزمه السكون هو:
+                <div class="options">
+                    <label class="option-item"><input type="radio" name="q3" value="1"> لم يسعَ</label>
+                    <label class="option-item"><input type="radio" name="q3" value="2"> لم يكتبوا</label>
+                    <label class="option-item"><input type="radio" name="q3" value="3"> لم يقصرْ</label>
+                    <label class="option-item"><input type="radio" name="q3" value="4"> لم يدعُ</label>
+                </div>
+            </div>
+            <div class="question">4. "لا تهملْ دروسك"؛ نوع "لا" هنا:
+                <div class="options">
+                    <label class="option-item"><input type="radio" name="q4" value="1"> نافية</label>
+                    <label class="option-item"><input type="radio" name="q4" value="2"> ناهية جازمة</label>
+                    <label class="option-item"><input type="radio" name="q4" value="3"> عاطفة</label>
+                    <label class="option-item"><input type="radio" name="q4" value="4"> زائدة</label>
+                </div>
+            </div>
+            <div class="question">5. "كي" حرف نصب يفيد:
+                <div class="options">
+                    <label class="option-item"><input type="radio" name="q5" value="1"> النفي</label>
+                    <label class="option-item"><input type="radio" name="q5" value="2"> التعليل</label>
+                    <label class="option-item"><input type="radio" name="q5" value="3"> الاستقبال</label>
+                    <label class="option-item"><input type="radio" name="q5" value="4"> الجزم</label>
+                </div>
+            </div>
+            <div class="question">6. أي الجمل الآتية تحتوي على فعل مضارع مرفوع بـ "ثبوت النون"؟
+                <div class="options">
+                    <label class="option-item"><input type="radio" name="q6" value="1"> يكتبان الدرس</label>
+                    <label class="option-item"><input type="radio" name="q6" value="2"> يكتبون الدرس</label>
+                    <label class="option-item"><input type="radio" name="q6" value="3"> تكتبين الدرس</label>
+                    <label class="option-item"><input type="radio" name="q6" value="4"> جميع ما سبق</label>
+                </div>
+            </div>
+            <div class="question">7. الفعل "يرضى" عند جزمه بـ "لم" يكتب:
+                <div class="options">
+                    <label class="option-item"><input type="radio" name="q7" value="1"> لم يرضى</label>
+                    <label class="option-item"><input type="radio" name="q7" value="2"> لم يرضِ</label>
+                    <label class="option-item"><input type="radio" name="q7" value="3"> لم يرضَ</label>
+                    <label class="option-item"><input type="radio" name="q7" value="4"> لم يرضُ</label>
+                </div>
+            </div>
+        </div>
 
-        <div class="question-section">
-            <h3>ثانياً: أكمل الفراغ</h3>
-            <p>1. يجب عليك أن <input type="text" name="fill1"> (يجتهد) كي تنجح.</p>
-            <p>2. لا <input type="text" name="fill2"> (تنسى) ذكر الله.</p>
-            </div>
+        <div class="section">
+            <div class="section-title">ثانياً: أكمل الفراغ (7 أسئلة)</div>
+            <p>1. لتنلْ رضا الله، يجب أن <input type="text" class="input-q"> (تصدق) في قولك.</p>
+            <p>2. لم <input type="text" class="input-q"> (يسعى) العامل للشر. (اكتب الفعل مجزوماً)</p>
+            <p>3. الطلاب <input type="text" class="input-q"> (يجتهد) في دراستهم. (فعل مرفوع بثبوت النون)</p>
+            <p>4. علامة رفع الفعل المعتل الآخر بالألف هي الضمة <input type="text" class="input-q">.</p>
+            <p>5. "لن" حرف نصب يفيد <input type="text" class="input-q">.</p>
+            <p>6. إنْ <input type="text" class="input-q"> (تذاكر) تنجح. (اضبط الفعل الأخير)</p>
+            <p>7. علامة جزم الأفعال الخمسة هي <input type="text" class="input-q">.</p>
+        </div>
 
-        <div class="question-section">
-            <h3>ثالثاً: صح أم خطأ</h3>
-            <p>1. علامة جزم الفعل المعتل الآخر هي السكون ( <input type="radio" name="tf1" value="t"> صح | <input type="radio" name="tf1" value="f"> خطأ )</p>
-            </div>
+        <div class="section">
+            <div class="section-title">ثالثاً: صح أم خطأ (7 أسئلة)</div>
+            <div class="question">1. علامة جزم الفعل المعتل الآخر هي حذف حرف العلة. (<input type="radio" name="tf1"> صح | <input type="radio" name="tf1"> خطأ)</div>
+            <div class="question">2. "لام التعليل" تجزم الفعل المضارع. (<input type="radio" name="tf2"> صح | <input type="radio" name="tf2"> خطأ)</div>
+            <div class="question">3. الفعل "يكتبوا" فعل مضارع منصوب وعلامة نصبه حذف النون. (<input type="radio" name="tf3"> صح | <input type="radio" name="tf3"> خطأ)</div>
+            <div class="question">4. الأفعال الخمسة ترفع بالضمة الظاهرة. (<input type="radio" name="tf4"> صح | <input type="radio" name="tf4"> خطأ)</div>
+            <div class="question">5. "لم" و "لا الناهية" من أدوات جزم الفعل المضارع. (<input type="radio" name="tf5"> صح | <input type="radio" name="tf5"> خطأ)</div>
+            <div class="question">6. الفعل المضارع "يقضي" يرفع بضمة مقدرة للثقل. (<input type="radio" name="tf6"> صح | <input type="radio" name="tf6"> خطأ)</div>
+            <div class="question">7. يبنى الفعل المضارع إذا اتصلت به نون النسوة. (<input type="radio" name="tf7"> صح | <input type="radio" name="tf7"> خطأ)</div>
+        </div>
 
-        <button type="button" class="submit-btn" onclick="submitQuiz()">تسليم الإجابات</button>
+        <div class="section">
+            <div class="section-title">رابعاً: مِثّل لما يلي (7 أسئلة)</div>
+            <p>1. فعل مضارع منصوب بـ "حتى": <input type="text" class="input-q" style="width: 300px;"></p>
+            <p>2. فعل مضارع مجزوم بحذف حرف العلة: <input type="text" class="input-q" style="width: 300px;"></p>
+            <p>3. فعل من الأفعال الخمسة في حالة رفع: <input type="text" class="input-q" style="width: 300px;"></p>
+            <p>4. فعل مضارع مرفوع بضمة مقدرة للتعذر: <input type="text" class="input-q" style="width: 300px;"></p>
+            <p>5. أداة شرط تجزم فعلين في جملة: <input type="text" class="input-q" style="width: 300px;"></p>
+            <p>6. فعل مضارع منصوب بلام التعليل: <input type="text" class="input-q" style="width: 300px;"></p>
+            <p>7. فعل مضارع مجزوم بـ "لام الأمر": <input type="text" class="input-q" style="width: 300px;"></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">خامساً: استخرج من النص (7 استخراجات)</div>
+            <blockquote style="background: #eee; padding: 15px; border-radius: 5px; line-height: 2;">
+                "يا بني، مَن <b>يسعَ</b> في الخير <b>ينلْ</b> محبة الناس، فـ <b>لتجتهدوا</b> في دروسكم كي <b>تصلوا</b> إلى القمة، والناس لا <b>يقدرون</b> إلا مَن <b>يعملُ</b> بجد، ولن <b>تندمَ</b> أبداً."
+            </blockquote>
+            <p>1. فعل مضارع مجزوم بحذف حرف العلة: <input type="text" class="input-q"></p>
+            <p>2. فعل مضارع منصوب بـ "كي": <input type="text" class="input-q"></p>
+            <p>3. فعل مضارع مرفوع بثبوت النون: <input type="text" class="input-q"></p>
+            <p>4. فعل مضارع مجزوم بلام الأمر: <input type="text" class="input-q"></p>
+            <p>5. فعل مضارع مرفوع بضمة ظاهرة: <input type="text" class="input-q"></p>
+            <p>6. فعل مضارع منصوب بـ "لن": <input type="text" class="input-q"></p>
+            <p>7. فعل جواب شرط مجزوم: <input type="text" class="input-q"></p>
+        </div>
+
+        <button type="button" class="submit-btn" onclick="finishQuiz()">إنهاء الاختبار وتسليم الإجابات</button>
     </form>
 </div>
 
 <script>
-    // برمجة المؤقت التنازلي (30 دقيقة)
-    let timeInMinutes = 30;
-    let currentTime = timeInMinutes * 60;
-    const timerElement = document.getElementById('timer');
+    // نظام المؤقت التنازلي
+    let timeLeft = 30 * 60; // 30 دقيقة بالثواني
+    const timerDisplay = document.getElementById('timer');
 
     const countdown = setInterval(() => {
-        const minutes = Math.floor(currentTime / 60);
-        let seconds = currentTime % 60;
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
         seconds = seconds < 10 ? '0' + seconds : seconds;
-        
-        timerElement.innerHTML = `الوقت المتبقي: ${minutes}:${seconds}`;
-        
-        if (currentTime <= 0) {
+        timerDisplay.textContent = `${minutes}:${seconds}`;
+
+        if (timeLeft <= 0) {
             clearInterval(countdown);
             alert("انتهى الوقت! سيتم تسليم الإجابات تلقائياً.");
-            submitQuiz();
-        } else {
-            currentTime--;
+            finishQuiz();
         }
+        timeLeft--;
     }, 1000);
 
-    function submitQuiz() {
+    function finishQuiz() {
         const name = document.getElementById('studentName').value;
-        const studentClass = document.getElementById('studentClass').value;
-        
-        if(!name || !studentClass) {
-            alert("يرجى إدخال الاسم والفصل أولاً!");
+        const sClass = document.getElementById('studentClass').value;
+
+        if (!name || !sClass) {
+            alert("عذراً، يجب إدخال اسمك وفصلك قبل تسليم الاختبار.");
             return;
         }
 
-        alert(`تم استلام إجاباتك يا ${name} من فصل ${studentClass}. شكراً لك!`);
-        // هنا يمكن إضافة كود لإرسال البيانات لقاعدة بيانات أو بريد إلكتروني
+        clearInterval(countdown);
+        alert(`تم استلام اختبارك بنجاح يا ${name}.\nالفصل: ${sClass}\nسيتم مراجعة إجاباتك لاحقاً.`);
+        document.getElementById('quizForm').innerHTML = `<h2 style='text-align:center; color:green;'>شكراً لك يا ${name}! تم تسليم الإجابات.</h2>`;
     }
 </script>
 
